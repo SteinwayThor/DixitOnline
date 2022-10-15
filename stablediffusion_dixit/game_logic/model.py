@@ -87,6 +87,7 @@ class GameState:
         self.votes[current_player] = voted_for
         if len(self.votes) == len(self.players):
             self.phase = GamePhase.ShowResults
+            self.score_votes()
             self.phase.trigger_state(self)
     
     def score_votes(self):
@@ -96,12 +97,12 @@ class GameState:
         #Increment tallies
         for vote in self.votes.values():
             tallies[vote] += 1
-        active_sid = self.active_player.sid    # Get the active Players Sid
+        active_sid = self.players[self.active_player]   # Get the active Players Sid
 
         #If No one voted for the active player
         if tallies[active_sid] == 0:
             for player in self.players:
-                if not player == self.active_player:
+                if not player == self.players[self.active_player]:
                     player.score += 2
 
         #If everyone voted for the active player
@@ -112,8 +113,8 @@ class GameState:
         #If at least one person voted for the active player
         else:
             for player in self.players:
-                if player == self.active_player:
-                    self.active_player.score += 3
+                if player == self.players[self.active_player]:
+                    self.players[self.active_player].score += 3
                 else:
                     if self.votes[player.sid] == active_sid:
                         self.score += 3

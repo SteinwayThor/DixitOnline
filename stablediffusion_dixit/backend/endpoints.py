@@ -5,7 +5,7 @@ from flask_socketio import SocketIO, emit
 from stablediffusion_dixit.game_logic.player import Player
 
 
-from stablediffusion_dixit.game_logic.model import GameState
+from stablediffusion_dixit.game_logic.model import GameState, GamePhase
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -33,7 +33,8 @@ def serve_anim(path):
 @socketio.on("join_game")
 def join_game(data):
     player = Player(request.sid,data['name'])
-    game_state.players.append(player)
+    if game_state.phase == GamePhase.WaitingToStart:
+        game_state.players.append(player)
 
 @socketio.on("join_tv")
 def join_tv(data):

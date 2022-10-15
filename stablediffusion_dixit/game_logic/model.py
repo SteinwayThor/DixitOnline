@@ -49,6 +49,7 @@ class GameState:
         self.card_order = None
         self.tvs = []
         self.votes = {}
+        self.round_scores = {}
 
         self.anims_this_round = []
         self.anims_prev_rounds = []
@@ -124,21 +125,27 @@ class GameState:
             for player in self.players:
                 if not player == self.players[self.active_player]:
                     player.score += 2
+                    self.round_scores[player] = 2
 
         #If everyone voted for the active player
         elif tallies[active_sid] == len(self.players) - 1:
             for player in self.players:
                player.score += 2 + tallies[player.sid]
+               self.round_scores[player] = 2 + tallies[player.sid]
 
         #If at least one person voted for the active player
         else:
             for player in self.players:
                 if player == self.players[self.active_player]:
                     self.players[self.active_player].score += 3
+                    self.round_scores[player] = 3
                 else:
                     if self.votes[player.sid] == active_sid:
                         self.score += 3
-                    self.score += tallies[player.sid]
+                        self.round_scores[player] = 3 + tallies[player.sid]
+                    else: 
+                        self.score += tallies[player.sid]
+                        self.round_scores[player] = tallies[player.sid]
     
 
     def get_active_player(self):
@@ -224,6 +231,12 @@ class GameState:
             tallies[vote] += 1
         active_sid = self.players[self.active_player].sid    # Get the active Players Sid
 
+        scores = {}
+
+        for player in self.players:
+            scores[player.nickname] = player.score
+            
+
         #If No one voted for the active player
         if tallies[active_sid] == 0:
             result = "nobody"
@@ -233,12 +246,19 @@ class GameState:
             result = "split"
 
         for player in self.players:
-            result = {
+            results = {
                 "is_active_player": player.sid == active_sid,
-                "result": result, # TODO Two other fields
+                "result": result,
+                "player_round_score": self.round_scores[player],
+                "player_total_score": player.score,
                 "guessed_active_player": None
             }
+            emit("player_results",results,to=player.sid)
+        
 
+    ##If button pressed to reset and go to next round, go next round
+    def reset():
+        pass
 
         
 if __name__ == "__main__":

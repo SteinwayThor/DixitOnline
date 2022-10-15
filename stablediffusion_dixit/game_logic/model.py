@@ -167,6 +167,12 @@ class GameState:
                     "image": self.get_random_animation()
                 }, to=player.sid)
 
+        for tv in self.tvs:
+            emit("display_waiting_screen", {
+                "state": "tv_waiting_active_prompt",
+                "image": self.get_random_animation()
+            }, to=tv.sid)
+
     def active_player_wait(self):
         active_player = self.get_active_player()
 

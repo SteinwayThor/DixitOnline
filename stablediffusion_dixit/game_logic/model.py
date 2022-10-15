@@ -134,11 +134,12 @@ class GameState:
         for player in self.players:
             if player.sid != active_player.sid:
                 emit("display_waiting_screen", {
-                    "Text": f"Wait for {active_player.nickname} to enter a image prompt"
+                    "Text": f"Wait for {active_player.nickname} to enter an image prompt"
                 }, to=player.sid)
 
     def active_player_wait(self):
         pass
+
 
     def active_player_give_clue(self):
         pass

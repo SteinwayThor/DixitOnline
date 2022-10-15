@@ -1,6 +1,7 @@
 **protocols**
 
 Randomize for any activities where timer runs out
+Server side == TV Interface
 
 -- CONNECTING TO THE GAME --
     Server Side:
@@ -30,7 +31,7 @@ Randomize for any activities where timer runs out
 
         3) Waiting Screen for non-active
 
--- ACTIVE PLAYER CHOOSES CLUE (4) --
+-- ACTIVE PLAYER CHOOSES CLUE (3) --
     Server Side:
         1) Timer
         2) Waiting Screen
@@ -38,14 +39,15 @@ Randomize for any activities where timer runs out
 
     User Side:
         1) Image passed from server
-        2) Clue text box with submit button -> Pass this information to backend **clue**
+        // 2) Clue text box with submit button -> Pass this information to backend **clue**
+            --> Submit button instead, clue is not written
 
         3) Waiting Screen for non-active
 
--- NON-ACTIVE PLAYERS CHOOSE PROMPTS (5) --
+-- NON-ACTIVE PLAYERS CHOOSE PROMPTS (4) --
     Server Side:
         1) Timer
-        2) Display Clue
+        // 2) Display Clue
 
     User Side:
         1) Sync timer with server
@@ -53,9 +55,15 @@ Randomize for any activities where timer runs out
 
         3) Waiting Screen for active
 
--- NON-ACTIVE PLAYERS CHOOSE IMAGE (6) --
+-- NON-ACTIVE PLAYERS VOTING (5) --
     Server Side:
-        
+        1) Timer
+        2) Display images
+
+    User Side:
+        1) Buttons indexed to each image (sent by server)
+        2) Sync timer with server
+        3) 
 
 
 

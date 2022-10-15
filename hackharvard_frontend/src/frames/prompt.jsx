@@ -10,20 +10,25 @@ function ActivePlayerPrompt(props) {
     "fontSize": "30px"
   };
 
-  function handleAPPSubmit() {
+  function handlePromptSubmit() {
     console.log("active player prompt submitted");
+  }
+
+  var promptInfo;
+  if (props.frameInfo.isActive) {
+    promptInfo = "You are the active player!"
+  } else {
+    promptInfo = "You are a bot, enter a prompt to visualize the active players clue!"
   }
 
   if (props.active) {
     return (
       <div id="container">
-        <div id="app_info" className="info_text">
-          {"You are the active player."}
-          <br />
-          {"Input an image prompt."}
+        <div id="prompt_info" className="info_text">
+          {promptInfo}
         </div>
 
-        <input style={inputStyles} onSubmit={handleAPPSubmit} />
+        <input style={inputStyles} onSubmit={handlePromptSubmit} />
       </div >
     )
   }

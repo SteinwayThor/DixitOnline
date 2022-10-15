@@ -57,6 +57,11 @@ class GameState:
         self.anims_this_round = []
         self.anims_prev_rounds = []
 
+        self.phase.trigger_state(self)
+    def get_player(self,sid):
+        for player in self.players:
+            if player.sid == sid:
+                return player
     def get_random_animation(self) -> str:
         premade_animations = [f"premade_animations/{n}.gif" for n in range(2)]
         if len(self.anims_prev_rounds) == 0:
@@ -291,27 +296,44 @@ class GameState:
             result = "everybody"
         else:
             result = "split"
-
+        guess_active = (result == "split" or result == "everybody")
         for player in self.players:
             results = {
                 "is_active_player": player.sid == active_sid,
                 "result": result,
                 "player_round_score": self.round_scores[player],
                 "player_total_score": player.score,
-                "guessed_active_player": None
+                "guessed_active_player": guess_active,
+                "num_bonus_votes" : tallies[player]
             }
             self.all_images = self.other_players_images
             self.all_images[self.get_active_player] = self.active_players_image
-            emit("player_results",results,to=player.sid)
+            emit("player_display_results",results,to=player.sid)
             for tv in self.tvs:
-                emit("tv_results",{
+                emit("tv_display_results",{
                     "round_scores": self.round_scores,
                 "player_scores": self.scores,
                 "images" : self.all_images
                 },to=tv.id)
             sleep(15)
-            self.round_scores = {}
-            self.active_player_write_prompt()
+            self.reset()
+
+    def reset(self):
+        self.active_player = (self.active_player + 1) % len(self.players)
+        self.active_players_image = None
+        self.active_players_image_ticket = None
+        self.other_players_images = {}
+        self.other_players_image_tickets = {}
+        self.card_order = None
+        self.votes = {}
+        self.round_scores = {}
+        self.anims_prev_rounds = self.anims_this_round
+        self.anims_this_round = []
+        self.all_images = {}
+        self.active_player_write_prompt()
+
+
+
         
 
         

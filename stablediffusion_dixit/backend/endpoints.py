@@ -46,13 +46,13 @@ def proceed():
 
 @socketio.on("vote")
 def vote(data):
-    print("vote")
-    print(data["voted_for"])
-    print(request.sid)
+    game_state.recieve_vote(request.sid,data['vote'])
 
 @socketio.on("disconnect")
-def disconnect():
-    print(request.sid + " disconnected")
+def disconnect(data):
+    dc_player = game_state.get_player(request.sid)
+    game_state.players.remove(dc_player)
+    game_state.reset()
 
 
 if __name__ == "__main__":

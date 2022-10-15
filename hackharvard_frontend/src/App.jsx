@@ -6,12 +6,11 @@ import RoleSelect from 'src/frames/roleSelect.jsx'
 import WaitingScreen from 'src/frames/wait.jsx'
 import PlayerResults from 'src/frames/playerResults'
 
-
 import { useEffect, useState } from 'react'
 import BotVote from './frames/bot/vote'
 
 function App() {
-  const [gameState, setGameState] = useState("roleSelect");
+  const [gameState, setGameState] = useState("role_select");
   const [frameInfo, setFrameInfo] = useState({});
 
   useEffect(() => {
@@ -59,10 +58,18 @@ function App() {
 
   // ajsdkjalskdjalksjdlakjsdlkajsdlkjaslkdjaslkdjalskdjalksdjaslkdjalskdjalskdjalskdjaslkdj
 
+  if (gameState == "role_select") {
+    return (
+      <div id="app_frame">
+        <RoleSelect info={frameInfo} />
+      </div>
+    )
+  }
+
   if (gameState == "wait") {
     return (
       <div id="app_frame">
-        <WaitingScreen />
+        <WaitingScreen info={frameInfo} />
       </div>
     )
   }
@@ -70,7 +77,7 @@ function App() {
   if (gameState == "active_player_clue") {
     return (
       <div id="app_frame">
-        <ActivePlayerClue />
+        <ActivePlayerClue info={frameInfo} />
       </div>
     )
   }
@@ -78,7 +85,7 @@ function App() {
   if (gameState == "bot_vote") {
     return (
       <div id="app_frame">
-        <BotVote />
+        <BotVote info={frameInfo} />
       </div>
     )
   }
@@ -98,6 +105,7 @@ function App() {
       </div>
     )
   }
+
 
 
 

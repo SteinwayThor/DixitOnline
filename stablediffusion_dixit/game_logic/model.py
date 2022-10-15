@@ -61,7 +61,7 @@ class GameState:
         for player in self.players:
             if player.sid == sid:
                 return player
-                
+
     def get_random_animation(self) -> str:
         premade_animations = [f"premade_animations/{n}.gif" for n in range(2)]
         if len(self.anims_prev_rounds) == 0:
@@ -70,23 +70,28 @@ class GameState:
             return random.choice(self.anims_prev_rounds)
 
     def receive_prompt(self, id, prompt):
+        #If the phase is the active players picking
         if self.phase == GamePhase.ActivePlayerPrompt:
+            #if the id matches the active player
             if id == self.get_active_player().sid:
+                #generate an image, and switch states after done waiting
                 self.active_players_image_ticket = self.image_generator.request_generation(prompt, callback=self.receive_image_finished_generating)
                 self.phase = GamePhase.ActivePlayerImageWait
                 self.phase.trigger_state(self)
 
+        #else its someone elses turn 
         elif self.phase == GamePhase.AllPlayersPrompt:
             player = self.get_player(id)
+            #get the image from the library
             self.other_players_image_tickets[player.sid] = self.image_generator.request_generation(prompt, callback=self.receive_image_finished_generating)
-            if len(self.other_players_image_tickets) == len(self.players - 1):
+            if len(self.other_players_image_tickets) == len(self.players - 1):   #If done, then change the state
                 self.phase = GamePhase.AllPlayersImageWait
                 self.phase.trigger_state(self)
 
     def receive_proceed_active_player(self, sid):
-        active_player_sid = self.players[self.active_player]
+        active_player_sid = self.players[self.active_player]    #Checking the active players ID
 
-        if sid == active_player_sid:
+        if sid == active_player_sid:    # If the player is the active one, switch states
             self.state = GamePhase.AllPlayersPrompt
             self.phase.trigger_state(self)
 
@@ -167,10 +172,11 @@ class GameState:
                 return player
 
     def active_player_write_prompt(self):
-        active_player = self.get_active_player()
+        active_player = self.get_active_player()    #Get the active player
 
-        emit("write_prompt", to=active_player.sid)
+        emit("write_prompt", to=active_player.sid)  #Tell the active player to write the prompt
 
+        #Display the waiting screen for everyone other than the active player
         for player in self.players:
             if player.sid != active_player.sid:
                 emit("display_waiting_screen", {

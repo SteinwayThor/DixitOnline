@@ -61,9 +61,20 @@ Server side == TV Interface
         2) Display images
 
     User Side:
-        1) Buttons indexed to each image (sent by server)
-        2) Sync timer with server
-        3) 
+        1) Sync timer with server
+        2) Buttons indexed to each image (sent by server) -> Pass this information to backend **vote**
+
+-- RESULTS (6) --
+    Server Side:
+        1) Present votes per image (perhaps transparency ^^ and show votes, prompt)
+        2) Scoreboard
+        3) Move to next state and choose new active player (go in a cycle)
+        4) If player reaches end state, end game (if we choose to code this)
+
+    User Side:
+        1) Waiting Screen
+
+    
 
 
 

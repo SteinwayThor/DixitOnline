@@ -145,10 +145,28 @@ class GameState:
         pass
 
     def active_player_give_clue(self):
-        pass
+        active_player = self.players[self.active_player]
+
+        emit("display_active_player_ok", {
+            "image": self.active_players_image
+        }, to=active_player.sid)
+
+        for player in self.players:
+            if player.sid != active_player.sid:
+                emit("display_waiting_screen", {
+                    "text": f"Listen for {active_player.nickname}'s clue!"
+                }, to=player.sid)
 
     def non_active_players_give_prompt(self):
-        pass
+        active_player = self.players[self.active_player]
+
+        emit("display_waiting_screen", {
+            "text": "Wait for other players to give a prompt"
+        }, to=active_player.sid)
+
+        for player in self.players:
+            if player.sid != active_player.sid:
+                emit("write_prompt", to=player.sid)
 
     def non_active_players_wait(self):
         pass

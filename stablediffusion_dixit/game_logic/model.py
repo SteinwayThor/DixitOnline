@@ -35,6 +35,18 @@ class GameState:
         else:
             self.phase = GamePhase(next_p)
 
+
+    def receive_prompt(self, id, prompt):
+        pass
+
+    def receive_proceed_active_player(self, id):
+        pass
+
+    def receive_image_finished_generating(self, image_num):
+        pass
+
+    def receive_vote(self, id, voted_for):
+        pass
     
         
 if __name__ == "__main__":

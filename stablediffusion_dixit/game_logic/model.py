@@ -31,9 +31,9 @@ class GamePhase(enum.Enum):
             state.non_active_players_vote()
         elif self.value == 7:
             state.show_results()
-
-        print("reached strange state")
-        exit()
+        else:
+            print("reached strange state")
+            exit()
 
 class GameState:
     def __init__(self):
@@ -75,10 +75,10 @@ class GameState:
 
     def receive_proceed_active_player(self, sid):
         active_player_sid = self.players[self.active_player]
-        
+
         if sid == active_player_sid:
             self.phase.trigger_state(self)
-        
+
 
 
 
@@ -119,7 +119,7 @@ class GameState:
         #Increment tallies
         for vote in self.votes.values():
             tallies[vote] += 1
-        active_sid = self.players[self.active_player]   # Get the active Players Sid
+        active_sid = self.players[self.active_player].sid     # Get the active Players Sid
 
         #If No one voted for the active player
         if tallies[active_sid] == 0:
@@ -207,8 +207,28 @@ class GameState:
                 emit("vote", to=player)
 
     def show_results(self):
-        pass
-    
+        tallies = {player.sid : 0 for player in self.players}
+
+        #Increment tallies
+        for vote in self.votes.values():
+            tallies[vote] += 1
+        active_sid = self.players[self.active_player].sid    # Get the active Players Sid
+
+        #If No one voted for the active player
+        if tallies[active_sid] == 0:
+            result = "nobody"
+        elif tallies[active_sid] == len(self.players) - 1:
+            result = "everybody"
+        else:
+            result = "split"
+
+        for player in self.players:
+            result = {
+                "is_active_player": player.sid == active_sid,
+                "result": result, # TODO Two other fields
+            }
+
+
         
 if __name__ == "__main__":
     GameState()

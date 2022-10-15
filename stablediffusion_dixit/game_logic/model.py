@@ -61,6 +61,7 @@ class GameState:
         for player in self.players:
             if player.sid == sid:
                 return player
+                
     def get_random_animation(self) -> str:
         premade_animations = [f"premade_animations/{n}.gif" for n in range(2)]
         if len(self.anims_prev_rounds) == 0:

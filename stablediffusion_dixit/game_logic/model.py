@@ -67,9 +67,9 @@ class GameState:
             if id == self.active_player:
                 self.active_players_image_ticket = self.image_generator.request_generation(prompt, callback=self.receive_image_finished_generating)
                 self.phase = GamePhase.ActivePlayerImageWait
+                self.phase.trigger_state(self)
 
-                # TODO Send messages to everyone to show waiting screen
-
+        # Error catching
         elif self.phase == GamePhase.AllPlayersPrompt:
             pass
 
@@ -77,10 +77,8 @@ class GameState:
         active_player_sid = self.players[self.active_player]
 
         if sid == active_player_sid:
+            self.state = GamePhase.AllPlayersPrompt
             self.phase.trigger_state(self)
-
-
-
 
     def receive_image_finished_generating(self, image_num, image_path, anim_path):
         self.anims_this_round.append(anim_path)
@@ -107,7 +105,7 @@ class GameState:
                 current_player = player
         #Set the votes dict
         self.votes[current_player] = voted_for
-        if len(self.votes) == len(self.players):
+        if len(self.votes) == len(self.players) - 1:
             self.phase = GamePhase.ShowResults
             self.score_votes()
             self.phase.trigger_state(self)
@@ -149,7 +147,7 @@ class GameState:
                 return player
 
     def active_player_write_prompt(self):
-        active_player = self.players[self.active_player]
+        active_player = self.get_active_player()
 
         emit("write_prompt", to=active_player.sid)
 
@@ -161,11 +159,16 @@ class GameState:
                 }, to=player.sid)
 
     def active_player_wait(self):
-        pass
+        active_player = self.get_active_player()
+
+        emit("display_waiting_screen", {
+            "state": "image_generation_active_players",
+            "image": self.get_random_animation()
+        }, to=active_player.sid)
 
 
     def active_player_give_clue(self):
-        active_player = self.players[self.active_player]
+        active_player = self.get_active_player()
 
         emit("display_active_player_ok", {
             "image": self.active_players_image
@@ -178,10 +181,10 @@ class GameState:
                 }, to=player.sid)
 
     def non_active_players_give_prompt(self):
-        active_player = self.players[self.active_player]
+        active_player = self.get_active_player()
 
         emit("display_waiting_screen", {
-            "text": "Wait for other players to give a prompt",
+            "state": "active_player_waiting_inactive_prompt",
             "image": self.get_random_animation()
         }, to=active_player.sid)
 
@@ -190,23 +193,28 @@ class GameState:
                 emit("write_prompt", to=player.sid)
 
     def non_active_players_wait(self):
+        active_player = self.get_active_player()
+
         for player in self.players:
-            emit("display_waiting_screen", {
-                "state": "image_generation_inactive_players",
-                "image": self.get_random_animation()
-            }, to=player.sid)
+            if player.sid != active_player.sid:
+                emit("display_waiting_screen", {
+                    "state": "image_generation_inactive_players",
+                    "image": self.get_random_animation()
+                }, to=player.sid)
 
     def non_active_players_vote(self):
-        active_player = self.players[self.active_player]
+        active_player = self.get_active_player()
 
         emit("display_waiting_screen", {
             "state": "active_player_wait_inactive_votes",
             "image": self.get_random_animation()
-        }, to=active_player)
+        }, to=active_player.sid)
 
         for player in self.players:
             if player.sid != active_player.sid:
-                emit("vote", to=player)
+                emit("vote", {
+                    "number": len(self.players)
+                }, to=player.sid)
 
     def show_results(self):
         tallies = {player.sid : 0 for player in self.players}
@@ -228,6 +236,7 @@ class GameState:
             result = {
                 "is_active_player": player.sid == active_sid,
                 "result": result, # TODO Two other fields
+                "guessed_active_player": None
             }
 
 

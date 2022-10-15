@@ -1,4 +1,5 @@
 import enum
+import random
 
 from stablediffusion_dixit.image_generation.local_generation.local_image_generator import LocalImageGenerator
 from flask_socketio import SocketIO, emit
@@ -48,7 +49,17 @@ class GameState:
         self.tvs = []
         self.votes = {}
 
+        self.anims_this_round = []
+        self.anims_prev_rounds = []
+
         self.phase.trigger_state(self)
+
+    def get_random_animation(self) -> str:
+        premade_animations = [f"premade_animations/{n}.gif" for n in range(2)]
+        if len(self.anims_prev_rounds) == 0:
+            return random.choice(premade_animations)
+        else:
+            return random.choice(self.anims_prev_rounds)
 
     def receive_prompt(self, id, prompt):
         if self.phase == GamePhase.ActivePlayerPrompt:
@@ -65,6 +76,8 @@ class GameState:
         pass
 
     def receive_image_finished_generating(self, image_num, image_path, anim_path):
+        self.anims_this_round.append(anim_path)
+
         if self.phase == GamePhase.ActivePlayerImageWait:
             if self.active_players_image_ticket == image_num:
                 self.active_players_image = image_path
@@ -138,7 +151,8 @@ class GameState:
         for player in self.players:
             if player.sid != active_player.sid:
                 emit("display_waiting_screen", {
-                    "Text": f"Wait for {active_player.nickname} to enter a image prompt"
+                    "text": f"Wait for {active_player.nickname} to enter a image prompt",
+                    "image": self.get_random_animation()
                 }, to=player.sid)
 
     def active_player_wait(self):
@@ -161,7 +175,8 @@ class GameState:
         active_player = self.players[self.active_player]
 
         emit("display_waiting_screen", {
-            "text": "Wait for other players to give a prompt"
+            "text": "Wait for other players to give a prompt",
+            "image": self.get_random_animation()
         }, to=active_player.sid)
 
         for player in self.players:

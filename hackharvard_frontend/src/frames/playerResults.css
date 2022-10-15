@@ -1,0 +1,20 @@
+#player_results_container{
+    height: 50vh;
+    width: 80vw;
+    /* box-shadow: inset 0 0 0 3px red; */
+
+    color: black;
+    font-size: 2rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+
+    margin: auto;
+}
+
+#pr_game_result {
+    font-size: 3rem;
+    font-weight: bold;
+}

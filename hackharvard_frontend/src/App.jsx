@@ -2,10 +2,9 @@ import './App.css'
 import socket from './socketConfig'
 
 import ActivePlayerClue from 'src/frames/active/clue'
-import ActivePlayerPrompt from 'src/frames/active/prompt'
 import RoleSelect from 'src/frames/roleSelect.jsx'
 import WaitingScreen from 'src/frames/wait.jsx'
-import BotPlayerPrompt from './frames/bot/prompt'
+import PlayerResults from 'src/frames/playerResults'
 
 
 import { useEffect, useState } from 'react'
@@ -36,7 +35,7 @@ function App() {
       setFrameInfo(msg);
     })
 
-    socket.io.on("display_results", (msg) => {
+    socket.io.on("player_display_results", (msg) => {
       setGameState("player_results");
       setFrameInfo(msg);
     })
@@ -51,11 +50,14 @@ function App() {
       setFrameInfo(msg);
     });
 
-    socket.io.on("tv_show_results", (msg) => {
+    socket.io.on("tv_display_results", (msg) => {
       setGameState("tv_results");
       setFrameInfo(msg);
     })
   }, []);
+
+
+  // ajsdkjalskdjalksjdlakjsdlkajsdlkjaslkdjaslkdjalskdjalksdjaslkdjalskdjalskdjalskdjaslkdj
 
   if (gameState == "wait") {
     return (
@@ -98,17 +100,7 @@ function App() {
   }
 
 
-  return (
-    <div id="app_frame">
 
-      <RoleSelect />
-      <WaitingScreen />
-      <ActivePlayerPrompt />
-      <ActivePlayerClue />
-      <BotPlayerPrompt />
-
-    </div>
-  )
 
 }
 

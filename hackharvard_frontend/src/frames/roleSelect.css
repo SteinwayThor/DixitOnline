@@ -1,11 +1,11 @@
 #rs_container {
-    height: 50vh;
+    height: 40vh;
     width: 50vh;
 
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;
 
     margin-top: auto;
     margin-bottom: auto;

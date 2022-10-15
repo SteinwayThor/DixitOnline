@@ -2,4 +2,5 @@ diffusers
 transformers
 scipy
 ftfy
+jupyter
 --pre torch --extra-index-url https://download.pytorch.org/whl/nightly/cpu

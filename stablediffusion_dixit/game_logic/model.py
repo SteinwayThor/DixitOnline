@@ -11,6 +11,12 @@ class GamePhase(enum.Enum):
     SelectActiveImage = 6
     ShowResults = 7
 
+    def trigger_state(self, state):
+        if self.value == 0:
+            print('hello')
+        else:
+            print('wack')
+
 class GameState:
     def __init__(self):
         self.phase = GamePhase.WaitingToStart
@@ -20,3 +26,16 @@ class GameState:
         self.other_players_images = {}
         self.tvs = []
 
+        self.phase.trigger_state(self)
+
+    def transition(self):
+        next_p = self.phase.value + 1
+        if next_p == 8:
+            self.phase = GamePhase(1)
+        else:
+            self.phase = GamePhase(next_p)
+
+    
+        
+if __name__ == "__main__":
+    GameState()

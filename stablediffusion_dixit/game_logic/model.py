@@ -31,9 +31,9 @@ class GamePhase(enum.Enum):
             state.non_active_players_vote()
         elif self.value == 7:
             state.show_results()
-
-        print("reached strange state")
-        exit()
+        else:
+            print("reached strange state")
+            exit()
 
 class GameState:
     def __init__(self):
@@ -75,10 +75,10 @@ class GameState:
 
     def receive_proceed_active_player(self, sid):
         active_player_sid = self.players[self.active_player]
-        
+
         if sid == active_player_sid:
             self.phase.trigger_state(self)
-        
+
 
 
 
@@ -119,7 +119,7 @@ class GameState:
         #Increment tallies
         for vote in self.votes.values():
             tallies[vote] += 1
-        active_sid = self.players[self.active_player]   # Get the active Players Sid
+        active_sid = self.players[self.active_player].sid     # Get the active Players Sid
 
         #If No one voted for the active player
         if tallies[active_sid] == 0:
@@ -156,7 +156,7 @@ class GameState:
         for player in self.players:
             if player.sid != active_player.sid:
                 emit("display_waiting_screen", {
-                    "text": f"Wait for {active_player.nickname} to enter a image prompt",
+                    "state": "inactive_player_wait_active_image_prompt",
                     "image": self.get_random_animation()
                 }, to=player.sid)
 
@@ -174,7 +174,7 @@ class GameState:
         for player in self.players:
             if player.sid != active_player.sid:
                 emit("display_waiting_screen", {
-                    "text": f"Listen for {active_player.nickname}'s clue!"
+                    "state": "inactive_player_wait_active_clue"
                 }, to=player.sid)
 
     def non_active_players_give_prompt(self):
@@ -192,14 +192,16 @@ class GameState:
     def non_active_players_wait(self):
         for player in self.players:
             emit("display_waiting_screen", {
-            "text": "Wait for the generated images."
+                "state": "image_generation_inactive_players",
+                "image": self.get_random_animation()
             }, to=player.sid)
 
     def non_active_players_vote(self):
         active_player = self.players[self.active_player]
 
         emit("display_waiting_screen", {
-            "text": "Wait for other players to vote."
+            "state": "active_player_wait_inactive_votes",
+            "image": self.get_random_animation()
         }, to=active_player)
 
         for player in self.players:
@@ -207,8 +209,28 @@ class GameState:
                 emit("vote", to=player)
 
     def show_results(self):
-        pass
-    
+        tallies = {player.sid : 0 for player in self.players}
+
+        #Increment tallies
+        for vote in self.votes.values():
+            tallies[vote] += 1
+        active_sid = self.players[self.active_player].sid    # Get the active Players Sid
+
+        #If No one voted for the active player
+        if tallies[active_sid] == 0:
+            result = "nobody"
+        elif tallies[active_sid] == len(self.players) - 1:
+            result = "everybody"
+        else:
+            result = "split"
+
+        for player in self.players:
+            result = {
+                "is_active_player": player.sid == active_sid,
+                "result": result, # TODO Two other fields
+            }
+
+
         
 if __name__ == "__main__":
     GameState()

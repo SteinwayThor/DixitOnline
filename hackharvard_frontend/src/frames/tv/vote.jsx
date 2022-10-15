@@ -5,7 +5,10 @@ function TvVote(props) {
 
     let items = []
     for (let card in props.card_images) {
-        items.push(<img src={card} alt={"Card"} key={card}/>)
+        items.push(
+            <div className="card_image">
+              <img src={card} alt={"Card"} key={card}/>
+            </div>);
     }
 
     return (

@@ -6,9 +6,27 @@ import ActivePlayerClue from 'src/frames/active/clue'
 import BotPlayerPrompt from './frames/bot/prompt'
 import { useState } from 'react'
 
+import socket from './socketConfig'
+
 function App() {
 
-  const [gameState, changeGameState] = useState(0);
+  const [gameState, setGameState] = useState("roleSelect");
+  const [frameInfo, setFrameInfo] = useState({});
+
+  useEffect(() => {
+    socket.io.on("display_waiting_screen", (msg) => {
+      setGameState("wait");
+      setFrameInfo(msg);
+    })
+
+    socket.io.on("display_active_player_ok", (msg) => {
+      setGameState("active_player_clue");
+      setFrameInfo(msg);
+    })
+
+  }, []);
+
+
 
   return (
     <div id="app_frame">

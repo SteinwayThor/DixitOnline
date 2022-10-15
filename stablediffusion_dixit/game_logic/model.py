@@ -53,11 +53,10 @@ class GameState:
         self.round_scores = {}
         self.scores = []
         self.all_images = {}
-
         self.anims_this_round = []
         self.anims_prev_rounds = []
-
         self.phase.trigger_state(self)
+
     def get_player(self,sid):
         for player in self.players:
             if player.sid == sid:
@@ -110,7 +109,9 @@ class GameState:
         for player in self.players:
             if player.id == sid:
                 current_player = player
-        #Set the votes dict
+        
+        #Set the votes dict(player -> id)
+        voted_for = self.card_order[voted_for]
         self.votes[current_player] = voted_for
         if len(self.votes) == len(self.players) - 1:
             self.phase = GamePhase.ShowResults

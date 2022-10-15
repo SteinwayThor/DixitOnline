@@ -16,7 +16,7 @@ class GamePhase(enum.Enum):
 
     def trigger_state(self, state):
         if self.value == 0:
-            state.waiting_to_start(state)
+            pass
         elif self.value == 1:
             state.active_player_write_prompt()
         elif self.value == 2:
@@ -32,6 +32,7 @@ class GamePhase(enum.Enum):
         elif self.value == 7:
             state.show_results()
 
+        print("reached strange state")
         exit()
 
 class GameState:
@@ -147,9 +148,6 @@ class GameState:
             if player.sid == self.active_player:
                 return player
 
-    def waiting_to_start(self):
-        pass
-
     def active_player_write_prompt(self):
         active_player = self.players[self.active_player]
 
@@ -198,7 +196,15 @@ class GameState:
             }, to=player.sid)
 
     def non_active_players_vote(self):
-        pass
+        active_player = self.players[self.active_player]
+
+        emit("display_waiting_screen", {
+            "text": "Wait for other players to vote."
+        }, to=active_player)
+
+        for player in self.players:
+            if player.sid != active_player.sid:
+                emit("vote", to=player)
 
     def show_results(self):
         pass

@@ -17,19 +17,16 @@ function ActivePlayerClue(props) {
         console.log('Done sharing clue');
     }
 
-    if (props.active) {
-        return (
-            <div id="container">
-                <div id="apc_info" className="info_text">
-                    {"You are the active player."}
-                    <br />
-                    {"Share your clue with the other players!"}
-                </div>
-                <Button label="Done" onClick={handleAPCDone} />
-            </div >
-        )
-    }
-
+    return (
+        <div id="container">
+            <div id="apc_info" className="info_text">
+                {"You are the active player."}
+                <br />
+                {"Share your clue with the other players!"}
+            </div>
+            <Button label="Done" onClick={handleAPCDone} />
+        </div >
+    )
 }
 
 export default ActivePlayerClue

@@ -12,18 +12,15 @@ function RoleSelect(props) {
         console.log(`PLAYER role selected`)
     }
 
-    if (props.active) {
-        return (
-            <div id="container">
-                <div id="rs_info_text" className='info_text'>
-                    Choose your role!
-                </div>
-                <Button label={"Host"} onClick={handleHostSelect} />
-                <Button label={"Player"} onClick={handlePlayerSelect} />
+    return (
+        <div id="rs_container">
+            <div id="rs_info_text" className='info_text'>
+                Choose your role!
             </div>
-        )
-    }
-
-
+            <Button label={"Host"} onClick={handleHostSelect} />
+            <Button label={"Player"} onClick={handlePlayerSelect} />
+        </div>
+    )
 }
+
 export default RoleSelect

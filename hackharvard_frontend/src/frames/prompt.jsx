@@ -3,7 +3,7 @@ import "src/App.css"
 import "./prompt.css"
 import socket from "../socketConfig.jsx";
 
-function ActivePlayerPrompt(props) {
+function Prompt(props) {
 
   var inputStyles = {
     "width": "100%",
@@ -25,18 +25,15 @@ function ActivePlayerPrompt(props) {
     promptInfo = "Enter a prompt to visualize the active players clue!"
   }
 
-  if (props.active) {
-    return (
-      <div id="container">
-        <div id="prompt_info" className="info_text">
-          {promptInfo}
-        </div>
-
-        <input style={inputStyles} onSubmit={handlePromptSubmit} />
-      </div >
-    )
-  }
-
+  return (
+    <div id="prompt_container">
+      <div id="prompt_info" className="info_text">
+        {promptInfo}
+      </div>
+      <input style={inputStyles} onSubmit={handlePromptSubmit} />
+    </div >
+  )
 }
 
-export default ActivePlayerPrompt
+
+export default Prompt

@@ -1,14 +1,15 @@
+from multiprocessing import freeze_support
+
 from flask import Flask, request, send_from_directory
 from flask_socketio import SocketIO, emit
 from stablediffusion_dixit.game_logic.player import Player
 
 
-from stablediffusion_dixit.model import GameState
+from stablediffusion_dixit.game_logic.model import GameState
 
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-game_state = GameState()
 
 @app.route("/blah", methods=["POST"])
 def blah():
@@ -29,6 +30,10 @@ def serve_anim(path):
 def join_game(data):
     player = Player(request.sid,data['name'])
     game_state.players.append(player)
+
+@socketio.on("join_tv")
+def join_tv():
+    game_state.tvs.append(request.sid)
 
 @socketio.on("enter_prompt")
 def enter_prompt(data):
@@ -56,4 +61,6 @@ def disconnect(data):
 
 
 if __name__ == "__main__":
+    freeze_support()
+    game_state = GameState()
     socketio.run(app)

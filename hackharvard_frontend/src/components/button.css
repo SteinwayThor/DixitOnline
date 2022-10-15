@@ -1,0 +1,31 @@
+#button_container {
+    width: 100px;
+    height: 50px;
+}
+
+#inner_button_container {
+    position: relative;
+    background-color: blue;
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+}
+
+#inner_button_container:hover{
+    box-shadow: inset 0 0 0 2px cornflowerblue;
+}
+
+#inner_button_container:active{
+    transform: scale(.98);
+}
+
+#button_label {
+    color: white;
+    font-size: 20px;
+}

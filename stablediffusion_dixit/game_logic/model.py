@@ -50,6 +50,8 @@ class GameState:
         self.tvs = []
         self.votes = {}
         self.round_scores = {}
+        self.scores = []
+        self.all_images = {}
 
         self.anims_this_round = []
         self.anims_prev_rounds = []
@@ -146,6 +148,8 @@ class GameState:
                     else: 
                         self.score += tallies[player.sid]
                         self.round_scores[player] = tallies[player.sid]
+        for index,player in enumerate(self.players):
+            self.scores[index] = player.score
     
 
     def get_active_player(self):
@@ -253,7 +257,15 @@ class GameState:
                 "player_total_score": player.score,
                 "guessed_active_player": None
             }
+            self.all_images = self.other_players_images
+            self.all_images[self.get_active_player] = self.active_players_image
             emit("player_results",results,to=player.sid)
+            for tv in self.tvs:
+                emit("tv_results",{
+                    "round_scores": self.round_scores,
+                "player_scores": self.scores,
+                "images" : self.all_images
+                },to=tv.id)
         
 
     ##If button pressed to reset and go to next round, go next round

@@ -3,17 +3,19 @@ import "./vote.css"
 
 function TvVote(props) {
 
-
-    if (props.active) {
-        return (
-            <div id="container">
-                <div id="tvvote_info" className="info_text">
-
-                </div>
-            </div>
-        )
+    let items = []
+    for (let card in props.card_images) {
+        items.push(<img src={card} alt={"Card"} key={card}/>)
     }
+
+    return (
+        <div id="container">
+            <div id="tvvote_info" className="info_text">
+                items
+            </div>
+        </div>
+    )
 }
 
-export default WaitingScreen
+export default TvVote
 

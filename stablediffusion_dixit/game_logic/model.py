@@ -15,7 +15,7 @@ class GamePhase(enum.Enum):
 
     def trigger_state(self, state):
         if self.value == 0:
-            state.
+            state.waiting_to_start(state)
         elif self.value == 1:
             state.active_player_write_prompt()
         elif self.value == 2:
@@ -126,6 +126,9 @@ class GameState:
         for player in self.players:
             if player.sid == self.active_player:
                 return player
+
+    def waiting_to_start(self):
+        pass
 
     def active_player_write_prompt(self):
         active_player = self.players[self.active_player]

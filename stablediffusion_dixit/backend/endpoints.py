@@ -29,16 +29,20 @@ def serve_anim(path):
 def join_game(data):
     player = Player(request.sid,data['name'])
     game_state.players.append(player)
-    emit("blah", {"a": "Hello " + data["name"]})
 
 @socketio.on("enter_prompt")
 def enter_prompt(data):
     prompt_text = data["prompt"]
+    game_state.receive_prompt(request.sid,prompt_text)
+    
+
+@socketio.on("start_game")
+def start_game():
+    game_state.active_player_write_prompt()
 
 @socketio.on("active_player_proceed")
 def proceed():
-    print("proceeding")
-    print(request.sid)
+    game_state.active_player_proceed(request.sid)
 
 @socketio.on("vote")
 def vote(data):

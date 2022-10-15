@@ -45,14 +45,15 @@ class GameState:
         self.active_player = 0  # Index
         self.active_players_image = None
         self.active_players_image_ticket = None
-        self.other_players_images = {}
-        self.other_players_image_tickets = {}
+        self.other_players_images = {} # sids to png
+        self.other_players_image_tickets = {} # sids to index
         self.card_order = None
         self.tvs = []
         self.votes = {}
         self.round_scores = {}
         self.scores = []
         self.all_images = {}
+        self.images = []
 
         self.anims_this_round = []
         self.anims_prev_rounds = []
@@ -264,21 +265,31 @@ class GameState:
                     "number": len(self.players)
                 }, to=player.sid)
 
-        images = self.create_images_list()
+        self.create_images_list()
 
         for tv in self.tvs:
             emit("tv_show_cards_vote", {
                 "state": "tv_waiting_generation_inactive",
-                "images": ""
+                "images": self.images
             }, to=tv.sid)
 
     def create_images_list(self):
+        self.card_order = []
+        self.images = []
+
+        for sid, img in self.other_players_images:
+            self.card_order.append(sid)
+            self.images.append(img)   
+
         active_player = self.get_active_player()
         active_player_image = self.active_players_image
-        self.other_players_images
-        
 
-        return None
+        self.card_order.append(active_player.sid)
+        self.images.append(active_player_image)
+
+        c = list(zip(self.card_order, self.images))
+        random.shuffle(c)
+        self.card_order, self.images = zip(*c)
 
     def show_results(self):
         tallies = {player.sid : 0 for player in self.players}
@@ -336,6 +347,7 @@ class GameState:
         self.anims_this_round = []
         self.all_images = {}
         self.active_player_write_prompt()
+        self.images = None
 
 
 

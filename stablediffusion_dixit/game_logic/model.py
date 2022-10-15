@@ -182,6 +182,12 @@ class GameState:
             "image": self.get_random_animation()
         }, to=active_player.sid)
 
+        for tv in self.tvs:
+            emit("display_waiting_screen", {
+                "state": "tv_waiting_generation_active",
+                "image": self.get_random_animation()
+            }, to=tv.sid)
+
 
     def active_player_give_clue(self):
         active_player = self.get_active_player()
@@ -196,6 +202,12 @@ class GameState:
                     "state": "inactive_player_wait_active_clue"
                 }, to=player.sid)
 
+        for tv in self.tvs:
+            emit("display_waiting_screen", {
+                "state": "tv_waiting_clue_active",
+                "image": self.get_random_animation()
+            }, to=tv.sid)
+
     def non_active_players_give_prompt(self):
         active_player = self.get_active_player()
 
@@ -208,6 +220,12 @@ class GameState:
             if player.sid != active_player.sid:
                 emit("write_prompt", to=player.sid)
 
+        for tv in self.tvs:
+            emit("display_waiting_screen", {
+                "state": "tv_waiting_inactive_prompt",
+                "image": self.get_random_animation()
+            }, to=tv.sid)
+
     def non_active_players_wait(self):
         active_player = self.get_active_player()
 
@@ -217,6 +235,12 @@ class GameState:
                     "state": "image_generation_inactive_players",
                     "image": self.get_random_animation()
                 }, to=player.sid)
+
+        for tv in self.tvs:
+            emit("display_waiting_screen", {
+                "state": "tv_waiting_generation_inactive",
+                "image": self.get_random_animation()
+            }, to=tv.sid)
 
     def non_active_players_vote(self):
         active_player = self.get_active_player()
@@ -231,6 +255,20 @@ class GameState:
                 emit("vote", {
                     "number": len(self.players)
                 }, to=player.sid)
+
+        images = self.create_images_list()
+
+        for tv in self.tvs:
+            emit("tv_show_cards_vote", {
+                "state": "tv_waiting_generation_inactive",
+                "images": ""
+            }, to=tv.sid)
+
+    def create_images_list(self):
+        active_player = self.get_active_player()
+        active_player_image = self.active_players_image
+        
+        return None
 
     def show_results(self):
         tallies = {player.sid : 0 for player in self.players}

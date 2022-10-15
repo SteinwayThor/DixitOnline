@@ -71,14 +71,17 @@ class GameState:
 
     def receive_prompt(self, id, prompt):
         if self.phase == GamePhase.ActivePlayerPrompt:
-            if id == self.active_player:
+            if id == self.get_active_player().sid:
                 self.active_players_image_ticket = self.image_generator.request_generation(prompt, callback=self.receive_image_finished_generating)
                 self.phase = GamePhase.ActivePlayerImageWait
                 self.phase.trigger_state(self)
 
-        # Error catching
         elif self.phase == GamePhase.AllPlayersPrompt:
-            pass
+            player = self.get_player(id)
+            self.other_players_image_tickets[player.sid] = self.image_generator.request_generation(prompt, callback=self.receive_image_finished_generating)
+            if len(self.other_players_image_tickets) == len(self.players - 1):
+                self.phase = GamePhase.AllPlayersImageWait
+                self.phase.trigger_state(self)
 
     def receive_proceed_active_player(self, sid):
         active_player_sid = self.players[self.active_player]
@@ -95,7 +98,7 @@ class GameState:
                 self.active_players_image = image_path
                 self.phase = GamePhase.ActivePlayerGiveClue
                 self.phase.trigger_state(self)
-        elif self.phase == GamePhase.AllPlayersImageWait:
+        elif self.phase in (GamePhase.AllPlayersImageWait, GamePhase.AllPlayersPrompt):
             for player_id, player_image_ticket in self.other_players_image_tickets.items():
                 if player_image_ticket == image_num:
                     self.other_players_images[player_id] = image_path
@@ -272,7 +275,9 @@ class GameState:
     def create_images_list(self):
         active_player = self.get_active_player()
         active_player_image = self.active_players_image
+        self.other_players_images
         
+
         return None
 
     def show_results(self):

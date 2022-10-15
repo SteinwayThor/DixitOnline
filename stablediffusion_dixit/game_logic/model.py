@@ -156,7 +156,7 @@ class GameState:
         for player in self.players:
             if player.sid != active_player.sid:
                 emit("display_waiting_screen", {
-                    "text": f"Wait for {active_player.nickname} to enter a image prompt",
+                    "state": "inactive_player_wait_active_image_prompt",
                     "image": self.get_random_animation()
                 }, to=player.sid)
 
@@ -174,7 +174,7 @@ class GameState:
         for player in self.players:
             if player.sid != active_player.sid:
                 emit("display_waiting_screen", {
-                    "text": f"Listen for {active_player.nickname}'s clue!"
+                    "state": "inactive_player_wait_active_clue"
                 }, to=player.sid)
 
     def non_active_players_give_prompt(self):
@@ -192,14 +192,16 @@ class GameState:
     def non_active_players_wait(self):
         for player in self.players:
             emit("display_waiting_screen", {
-            "text": "wait for the generated images"
+                "state": "image_generation_inactive_players",
+                "image": self.get_random_animation()
             }, to=player.sid)
 
     def non_active_players_vote(self):
         active_player = self.players[self.active_player]
 
         emit("display_waiting_screen", {
-            "text": "Wait for other players to vote."
+            "state": "active_player_wait_inactive_votes",
+            "image": self.get_random_animation()
         }, to=active_player)
 
         for player in self.players:

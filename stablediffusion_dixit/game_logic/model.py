@@ -192,7 +192,7 @@ class GameState:
     def non_active_players_wait(self):
         for player in self.players:
             emit("display_waiting_screen", {
-            "text": "wait for the generated images"
+            "text": "Wait for the generated images."
             }, to=player.sid)
 
     def non_active_players_vote(self):

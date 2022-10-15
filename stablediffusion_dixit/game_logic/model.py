@@ -43,6 +43,8 @@ class GameState:
         self.active_players_image = None
         self.active_players_image_ticket = None
         self.other_players_images = {}
+        self.other_players_image_tickets = {}
+        self.card_order = None
         self.tvs = []
 
     def receive_prompt(self, id, prompt):
@@ -63,10 +65,16 @@ class GameState:
         if self.phase == GamePhase.ActivePlayerImageWait:
             if self.active_players_image_ticket == image_num:
                 self.active_players_image = image_path
-                # TODO Send message to active player to give clue
                 self.phase = GamePhase.ActivePlayerGiveClue
-                self.phase.trigger_state()
-        pass
+                self.phase.trigger_state(self)
+        elif self.phase == GamePhase.AllPlayersImageWait:
+            for player_id, player_image_ticket in self.other_players_image_tickets.items():
+                if player_image_ticket == image_num:
+                    self.other_players_images[player_id] = image_path
+
+            if len(self.other_players_images) == len(self.other_players_image_tickets):
+                self.phase = GamePhase.SelectActiveImage
+                self.phase.trigger_state(self)
 
     def receive_vote(self, id, voted_for):
         pass

@@ -3,6 +3,7 @@ import random
 
 from stablediffusion_dixit.image_generation.local_generation.local_image_generator import LocalImageGenerator
 from flask_socketio import SocketIO, emit
+from time import *
 
 class GamePhase(enum.Enum):
     WaitingToStart = 0
@@ -16,7 +17,7 @@ class GamePhase(enum.Enum):
 
     def trigger_state(self, state):
         if self.value == 0:
-            pass
+            return
         elif self.value == 1:
             state.active_player_write_prompt()
         elif self.value == 2:
@@ -270,6 +271,9 @@ class GameState:
                 "player_scores": self.scores,
                 "images" : self.all_images
                 },to=tv.id)
+            sleep(15)
+            self.round_scores = {}
+            self.active_player_write_prompt()
         
 
         

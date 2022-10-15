@@ -1,5 +1,7 @@
 from flask import Flask, request, send_from_directory
 from flask_socketio import SocketIO, emit
+from stablediffusion_dixit.game_logic.player import Player
+
 
 from stablediffusion_dixit.model import GameState
 
@@ -25,19 +27,22 @@ def serve_anim(path):
 
 @socketio.on("join_game")
 def join_game(data):
-    print("join game")
-    print(data)
-    print(request.sid)
-    emit("blah", {"a": "Hello " + data["name"]})
+    player = Player(request.sid,data['name'])
+    game_state.players.append(player)
 
 @socketio.on("enter_prompt")
 def enter_prompt(data):
     prompt_text = data["prompt"]
+    game_state.receive_prompt(request.sid,prompt_text)
+    
+
+@socketio.on("start_game")
+def start_game():
+    game_state.active_player_write_prompt()
 
 @socketio.on("active_player_proceed")
 def proceed():
-    print("proceeding")
-    print(request.sid)
+    game_state.active_player_proceed(request.sid)
 
 @socketio.on("vote")
 def vote(data):

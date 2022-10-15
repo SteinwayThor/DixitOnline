@@ -66,7 +66,7 @@ Server side == TV Interface
 
 -- RESULTS (6) --
     Server Side:
-        1) Present votes per image (perhaps transparency ^^ and show votes, prompt)
+        1) Present votes per image (perhaps transparency ^^ and show votes, prompt), REVEAL
         2) Scoreboard
         3) Move to next state and choose new active player (go in a cycle)
         4) If player reaches end state, end game (if we choose to code this)

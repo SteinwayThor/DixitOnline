@@ -54,8 +54,8 @@ class GameState:
         self.votes = {}
         self.round_scores = {}
         self.scores = []
-        self.all_images = {}
         self.images = []
+        self.prompts = {} # Sid -> Prompt
 
         self.anims_this_round = []
         self.anims_prev_rounds = []
@@ -83,11 +83,13 @@ class GameState:
             if id == self.get_active_player().sid:
                 #generate an image, and switch states after done waiting
                 self.active_players_image_ticket = self.image_generator.request_generation(prompt, callback=self.receive_image_finished_generating)
+                self.prompts[id] = prompt
                 self.phase = GamePhase.ActivePlayerImageWait
                 self.phase.trigger_state(self)
 
         #else its someone elses turn 
         elif self.phase == GamePhase.AllPlayersPrompt:
+            self.prompts[id] = prompt
             player = self.get_player(id)
             #get the image from the library
             self.other_players_image_tickets[player.sid] = self.image_generator.request_generation(prompt, callback=self.receive_image_finished_generating)
@@ -335,14 +337,12 @@ class GameState:
                 "guessed_active_player": guess_active,
                 "num_bonus_votes" : tallies[player]
             }
-            self.all_images = self.other_players_images
-            self.all_images[self.get_active_player] = self.active_players_image
             emit("player_display_results",results,to=player.sid)
             for tv in self.tvs:
                 emit("tv_display_results",{
                     "round_scores": self.round_scores,
                 "player_scores": self.scores,
-                "images" : self.all_images
+                "images" : self.images
                 },to=tv.id)
 
             def sleep_and_reset():

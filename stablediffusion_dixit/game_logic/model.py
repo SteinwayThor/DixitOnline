@@ -53,7 +53,6 @@ class GameState:
         self.tvs = []
         self.votes = {}
         self.round_scores = {}
-        self.scores = []
         self.images = []
         self.prompts = {} # Sid -> Prompt
 
@@ -87,7 +86,7 @@ class GameState:
                 self.phase = GamePhase.ActivePlayerImageWait
                 self.phase.trigger_state(self)
 
-        #else its someone elses turn 
+        #else its someone elses turn
         elif self.phase == GamePhase.AllPlayersPrompt:
             self.prompts[id] = prompt
             player = self.get_player(id)
@@ -167,14 +166,12 @@ class GameState:
                     self.round_scores[player] = 3
                 else:
                     if self.votes[player.sid] == active_sid:
-                        self.score += 3
+                        player.score += 3
                         self.round_scores[player] = 3 + tallies[player.sid]
                     else: 
-                        self.score += tallies[player.sid]
+                        player.score += tallies[player.sid]
                         self.round_scores[player] = tallies[player.sid]
-        for index,player in enumerate(self.players):
-            self.scores[index] = player.score
-    
+
 
     def get_active_player(self):
         return self.players[self.active_player]
@@ -196,7 +193,7 @@ class GameState:
             emit("display_waiting_screen", {
                 "state": "tv_waiting_active_prompt",
                 "image": self.get_random_animation()
-            }, to=tv.sid, namespace="/")
+            }, to=tv, namespace="/")
 
     def active_player_wait(self):
         active_player = self.get_active_player()
@@ -210,7 +207,7 @@ class GameState:
             emit("display_waiting_screen", {
                 "state": "tv_waiting_generation_active",
                 "image": self.get_random_animation()
-            }, to=tv.sid)
+            }, to=tv)
 
 
     def active_player_give_clue(self):
@@ -230,7 +227,7 @@ class GameState:
             emit("display_waiting_screen", {
                 "state": "tv_waiting_clue_active",
                 "image": self.get_random_animation()
-            }, to=tv.sid, namespace="/")
+            }, to=tv, namespace="/")
 
     def non_active_players_give_prompt(self):
         active_player = self.get_active_player()
@@ -248,7 +245,7 @@ class GameState:
             emit("display_waiting_screen", {
                 "state": "tv_waiting_inactive_prompt",
                 "image": self.get_random_animation()
-            }, to=tv.sid)
+            }, to=tv)
 
     def non_active_players_wait(self):
         active_player = self.get_active_player()
@@ -264,7 +261,7 @@ class GameState:
             emit("display_waiting_screen", {
                 "state": "tv_waiting_generation_inactive",
                 "image": self.get_random_animation()
-            }, to=tv.sid)
+            }, to=tv)
 
     def non_active_players_vote(self):
         active_player = self.get_active_player()
@@ -286,7 +283,7 @@ class GameState:
             emit("tv_show_cards_vote", {
                 "state": "tv_waiting_generation_inactive",
                 "images": self.images
-            }, to=tv.sid, namespace="/")
+            }, to=tv, namespace="/")
 
     def create_images_list(self):
         self.card_order = []
@@ -338,19 +335,37 @@ class GameState:
                 "num_bonus_votes" : tallies[player]
             }
             emit("player_display_results",results,to=player.sid)
-            for tv in self.tvs:
-                emit("tv_display_results",{
-                    "round_scores": self.round_scores,
-                "player_scores": self.scores,
-                "images" : self.images
-                },to=tv.id)
 
-            def sleep_and_reset():
-                sleep(15)
-                with self.app.app_context():
-                    self.reset()
+        tv_image_info = []
+        for sid, image in zip(self.card_order, self.images):
+            tv_image_info.append({
+                "image": image,
+                "votes": [player.nickname for player in self.players if self.votes[player] == sid],
+                "is_active_player": True
+            })
 
-            threading.Thread(target=sleep_and_reset).start()
+        player_scores = []
+        for player in self.players:
+            player_scores.append({
+                "name": player.nickname,
+                "round_score": self.round_scores[player],
+                "total_score": player.score
+            })
+
+        player_scores.sort(key=lambda p: p["total_score"])
+
+        for tv in self.tvs:
+            emit("tv_display_results", {
+                "images": tv_image_info,
+                "players": player_scores,
+            },to=tv)
+
+        def sleep_and_reset():
+            sleep(15)
+            with self.app.app_context():
+                self.reset()
+
+        threading.Thread(target=sleep_and_reset).start()
 
     def reset(self):
         self.active_player = (self.active_player + 1) % len(self.players)
@@ -363,7 +378,6 @@ class GameState:
         self.round_scores = {}
         self.anims_prev_rounds.extend(self.anims_this_round)
         self.anims_this_round = []
-        self.all_images = {}
         self.active_player_write_prompt()
         self.images = None
 

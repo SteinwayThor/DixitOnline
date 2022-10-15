@@ -15,7 +15,7 @@ class GamePhase(enum.Enum):
 
     def trigger_state(self, state):
         if self.value == 0:
-            print('hello')
+            state.
         elif self.value == 1:
             state.active_player_write_prompt()
         elif self.value == 2:
@@ -46,6 +46,8 @@ class GameState:
         self.other_players_image_tickets = {}
         self.card_order = None
         self.tvs = []
+
+        self.phase.trigger_state(self)
 
     def receive_prompt(self, id, prompt):
         if self.phase == GamePhase.ActivePlayerPrompt:

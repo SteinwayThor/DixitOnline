@@ -107,7 +107,7 @@ class GameState:
                 current_player = player
         #Set the votes dict
         self.votes[current_player] = voted_for
-        if len(self.votes) == len(self.players):
+        if len(self.votes) == len(self.players) - 1:
             self.phase = GamePhase.ShowResults
             self.score_votes()
             self.phase.trigger_state(self)

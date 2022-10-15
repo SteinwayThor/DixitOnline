@@ -1,0 +1,62 @@
+**protocols**
+
+Randomize for any activities where timer runs out
+
+-- CONNECTING TO THE GAME --
+    Server Side:
+
+    User Side:
+        1) Create -> Does nothing, sends nothing, is altogether useless
+        2) Join + Nickname -> Pass the nickname to backend **player_info**
+
+-- WAITING SCREEN (1) --
+    Server Side:
+        1) Number of players connected [len(players)]
+        2) Start button -> Queue transition to next game state [state.next(), chooses active player at random]
+
+    User Side:
+        1) Display your nickname, requested from server (automatic server activity)
+        2) Basic waiting message/ animation/ whatever (automatic/ front end)
+        
+-- ACTIVE PLAYER CHOOSES PROMPT (2) --
+    Server Side:
+        1) Timer
+        2) Waiting Screen
+        3) Upon receiving prompt, transition to next game state [state.next(), timer stops on both ends, eventually sends generated image to active player]
+    
+    User Side:
+        1) Sync timer with server
+        2) Prompt text box with submit button -> Pass this information to backend **prompt**
+
+        3) Waiting Screen for non-active
+
+-- ACTIVE PLAYER CHOOSES CLUE (4) --
+    Server Side:
+        1) Timer
+        2) Waiting Screen
+        3) Upon receiving clue, transition to next game state [state.next()]
+
+    User Side:
+        1) Image passed from server
+        2) Clue text box with submit button -> Pass this information to backend **clue**
+
+        3) Waiting Screen for non-active
+
+-- NON-ACTIVE PLAYERS CHOOSE PROMPTS (5) --
+    Server Side:
+        1) Timer
+        2) Display Clue
+
+    User Side:
+        1) Sync timer with server
+        2) Prompt text box with submit button -> Pass this information to backend **prompt**
+
+        3) Waiting Screen for active
+
+-- NON-ACTIVE PLAYERS CHOOSE IMAGE (6) --
+    Server Side:
+        
+
+
+
+    

@@ -8,17 +8,20 @@ class ProgressCapturer:
         self.pipe = pipe
 
     def __call__(self, i, n, latent):
-        self.latents.append(latent[0])
+        self.latents.append(latent)
 
     def get_images(self):
+        images = []
         with torch.no_grad():
-            latents = torch.stack(self.latents)
-            latents = 1 / 0.18215 * latents
-            images = self.pipe.vae.decode(latents).sample
+            for l in self.latents:
+                latents = 1 / 0.18215 * l
+                image = self.pipe.vae.decode(latents).sample
 
-            images = (images / 2 + 0.5).clamp(0, 1)
+                image = (image / 2 + 0.5).clamp(0, 1)
 
-            # we always cast to float32 as this does not cause significant overhead and is compatible with bfloa16
-            images = images.cpu().permute(0, 2, 3, 1).float().numpy()
-            return self.pipe.numpy_to_pil(images)
+                # we always cast to float32 as this does not cause significant overhead and is compatible with bfloa16
+                image = image.cpu().permute(0, 2, 3, 1).float().numpy()
+                images.append(self.pipe.numpy_to_pil(image)[0])
+
+        return images
 

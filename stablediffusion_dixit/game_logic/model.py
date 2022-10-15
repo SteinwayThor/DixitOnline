@@ -53,8 +53,6 @@ class GameState:
         self.anims_this_round = []
         self.anims_prev_rounds = []
 
-        self.phase.trigger_state(self)
-
     def get_random_animation(self) -> str:
         premade_animations = [f"premade_animations/{n}.gif" for n in range(2)]
         if len(self.anims_prev_rounds) == 0:

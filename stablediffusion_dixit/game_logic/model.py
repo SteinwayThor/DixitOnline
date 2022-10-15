@@ -16,8 +16,22 @@ class GamePhase(enum.Enum):
     def trigger_state(self, state):
         if self.value == 0:
             print('hello')
-        else:
-            print('wack')
+        elif self.value == 1:
+            state.active_player_write_prompt()
+        elif self.value == 2:
+            state.active_player_wait()
+        elif self.value == 3:
+            state.active_player_give_clue()
+        elif self.value == 4:
+            state.non_active_players_give_prompt()
+        elif self.value == 5:
+            state.non_active_players_wait()
+        elif self.value == 6:
+            state.non_active_players_vote()
+        elif self.value == 7:
+            state.show_results()
+
+        exit()
 
 class GameState:
     def __init__(self):
@@ -30,16 +44,6 @@ class GameState:
         self.active_players_image_ticket = None
         self.other_players_images = {}
         self.tvs = []
-
-        self.phase.trigger_state(self)
-
-    def transition(self):
-        next_p = self.phase.value + 1
-        if next_p == 8:
-            self.phase = GamePhase(1)
-        else:
-            self.phase = GamePhase(next_p)
-
 
     def receive_prompt(self, id, prompt):
         if self.phase == GamePhase.ActivePlayerPrompt:
@@ -61,9 +65,31 @@ class GameState:
                 self.active_players_image = image_path
                 # TODO Send message to active player to give clue
                 self.phase = GamePhase.ActivePlayerGiveClue
+                self.phase.trigger_state()
         pass
 
     def receive_vote(self, id, voted_for):
+        pass
+
+    def active_player_write_prompt():
+        pass
+
+    def active_player_wait():
+        pass
+
+    def active_player_give_clue():
+        pass
+
+    def non_active_players_give_prompt():
+        pass
+
+    def non_active_players_wait():
+        pass
+
+    def non_active_players_vote():
+        pass
+
+    def show_results():
         pass
     
         

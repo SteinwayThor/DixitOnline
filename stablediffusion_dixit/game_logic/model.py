@@ -61,8 +61,14 @@ class GameState:
         elif self.phase == GamePhase.AllPlayersPrompt:
             pass
 
-    def receive_proceed_active_player(self, id):
-        pass
+    def receive_proceed_active_player(self, sid):
+        active_player_sid = self.players[self.active_player]
+        
+        if sid == active_player_sid:
+            self.phase.trigger_state(self)
+        
+
+
 
     def receive_image_finished_generating(self, image_num, image_path, anim_path):
         if self.phase == GamePhase.ActivePlayerImageWait:
@@ -171,7 +177,10 @@ class GameState:
                 emit("write_prompt", to=player.sid)
 
     def non_active_players_wait(self):
-        pass
+        for player in self.players:
+            emit("display_waiting_screen", {
+            "text": "wait for the generated images"
+            }, to=player.sid)
 
     def non_active_players_vote(self):
         pass

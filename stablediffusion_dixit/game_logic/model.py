@@ -1,7 +1,7 @@
 import enum
 
 from stablediffusion_dixit.image_generation.local_generation.local_image_generator import LocalImageGenerator
-
+from flask_socketio import SocketIO, emit
 
 class GamePhase(enum.Enum):
     WaitingToStart = 0
@@ -38,8 +38,8 @@ class GameState:
         self.image_generator = LocalImageGenerator()
 
         self.phase = GamePhase.WaitingToStart
-        self.players = []
-        self.active_player = None
+        self.players = []  # Player object
+        self.active_player = 0  # Index
         self.active_players_image = None
         self.active_players_image_ticket = None
         self.other_players_images = {}
@@ -119,27 +119,39 @@ class GameState:
                         self.score += 3
                     self.score += tallies[player.sid]
     
-    
 
-    def active_player_write_prompt():
+    def get_active_player(self):
+        for player in self.players:
+            if player.sid == self.active_player:
+                return player
+
+    def active_player_write_prompt(self):
+        active_player = self.players[self.active_player]
+
+        emit("write_prompt", to=active_player.sid)
+
+        for player in self.players:
+            if player.sid != active_player.sid:
+                emit("display_waiting_screen", {
+                    "Text": f"Wait for {active_player.nickname} to enter a image prompt"
+                }, to=player.sid)
+
+    def active_player_wait(self):
         pass
 
-    def active_player_wait():
+    def active_player_give_clue(self):
         pass
 
-    def active_player_give_clue():
+    def non_active_players_give_prompt(self):
         pass
 
-    def non_active_players_give_prompt():
+    def non_active_players_wait(self):
         pass
 
-    def non_active_players_wait():
+    def non_active_players_vote(self):
         pass
 
-    def non_active_players_vote():
-        pass
-
-    def show_results():
+    def show_results(self):
         pass
     
         

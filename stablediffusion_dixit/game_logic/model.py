@@ -46,6 +46,7 @@ class GameState:
         self.other_players_image_tickets = {}
         self.card_order = None
         self.tvs = []
+        self.votes = {}
 
     def receive_prompt(self, id, prompt):
         if self.phase == GamePhase.ActivePlayerPrompt:
@@ -76,8 +77,49 @@ class GameState:
                 self.phase = GamePhase.SelectActiveImage
                 self.phase.trigger_state(self)
 
-    def receive_vote(self, id, voted_for):
-        pass
+    def receive_vote(self, sid, voted_for):
+        #Find the player who voted
+        current_player = None
+        for player in self.players:
+            if player.id == sid:
+                current_player = player
+        #Set the votes dict
+        self.votes[current_player] = voted_for
+        if len(self.votes) == len(self.players):
+            self.phase = GamePhase.ShowResults
+            self.phase.trigger_state(self)
+    
+    def score_votes(self):
+        #Initialize tallies, keeps track of votes for each player
+        tallies = {player.sid : 0 for player in self.players}
+
+        #Increment tallies
+        for vote in self.votes.values():
+            tallies[vote] += 1
+        active_sid = self.active_player.sid    # Get the active Players Sid
+
+        #If No one voted for the active player
+        if tallies[active_sid] == 0:
+            for player in self.players:
+                if not player == self.active_player:
+                    player.score += 2
+
+        #If everyone voted for the active player
+        elif tallies[active_sid] == len(self.players) - 1:
+            for player in self.players:
+               player.score += 2 + tallies[player.sid]
+
+        #If at least one person voted for the active player
+        else:
+            for player in self.players:
+                if player == self.active_player:
+                    self.active_player.score += 3
+                else:
+                    if self.votes[player.sid] == active_sid:
+                        self.score += 3
+                    self.score += tallies[player.sid]
+    
+    
 
     def active_player_write_prompt():
         pass

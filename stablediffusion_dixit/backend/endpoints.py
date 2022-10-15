@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask_socketio import SocketIO, emit
 
 from stablediffusion_dixit.model import GameState
@@ -15,6 +15,13 @@ def blah():
         "resp": f"Hello, {req['name']}"
     }
 
+@app.route("/images/<path:path>")
+def serve_image(path):
+    return send_from_directory("images", path)
+
+@app.route("/animations/<path:path>")
+def serve_anim(path):
+    return send_from_directory("animations", path)
 
 @socketio.on("join_game")
 def join_game(data):

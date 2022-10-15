@@ -15,7 +15,7 @@ class GamePhase(enum.Enum):
 
     def trigger_state(self, state):
         if self.value == 0:
-            print('hello')
+            state.waiting_to_start(state)
         elif self.value == 1:
             state.active_player_write_prompt()
         elif self.value == 2:
@@ -47,6 +47,8 @@ class GameState:
         self.card_order = None
         self.tvs = []
         self.votes = {}
+
+        self.phase.trigger_state(self)
 
     def receive_prompt(self, id, prompt):
         if self.phase == GamePhase.ActivePlayerPrompt:
@@ -126,6 +128,9 @@ class GameState:
             if player.sid == self.active_player:
                 return player
 
+    def waiting_to_start(self):
+        pass
+
     def active_player_write_prompt(self):
         active_player = self.players[self.active_player]
 
@@ -142,10 +147,28 @@ class GameState:
 
 
     def active_player_give_clue(self):
-        pass
+        active_player = self.players[self.active_player]
+
+        emit("display_active_player_ok", {
+            "image": self.active_players_image
+        }, to=active_player.sid)
+
+        for player in self.players:
+            if player.sid != active_player.sid:
+                emit("display_waiting_screen", {
+                    "text": f"Listen for {active_player.nickname}'s clue!"
+                }, to=player.sid)
 
     def non_active_players_give_prompt(self):
-        pass
+        active_player = self.players[self.active_player]
+
+        emit("display_waiting_screen", {
+            "text": "Wait for other players to give a prompt"
+        }, to=active_player.sid)
+
+        for player in self.players:
+            if player.sid != active_player.sid:
+                emit("write_prompt", to=player.sid)
 
     def non_active_players_wait(self):
         pass

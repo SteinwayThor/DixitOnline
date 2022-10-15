@@ -268,10 +268,6 @@ class GameState:
                 },to=tv.id)
         
 
-    ##If button pressed to reset and go to next round, go next round
-    def reset():
-        pass
-
         
 if __name__ == "__main__":
     GameState()

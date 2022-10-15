@@ -4,7 +4,7 @@ from typing import Optional, Callable
 
 class ImageGenerator(abc.ABC):
     @abc.abstractmethod
-    def request_generation(self, prompt: str, callback: Callable[[int, str], None]) -> int:
+    def request_generation(self, prompt: str, callback: Optional[Callable[[int, str], None]] = None) -> int:
         pass
 
     @abc.abstractmethod

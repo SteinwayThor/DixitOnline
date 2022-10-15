@@ -57,6 +57,9 @@ class GameState:
         self.anims_prev_rounds = []
         self.phase.trigger_state(self)
 
+    def start_game(self):
+        self.state = GamePhase.ActivePlayerPrompt
+        self.state.trigger_state(self)
     def get_player(self,sid):
         for player in self.players:
             if player.sid == sid:
@@ -162,14 +165,12 @@ class GameState:
     
 
     def get_active_player(self):
-        for player in self.players:
-            if player.sid == self.active_player:
-                return player
+        return self.players[self.active_player]
 
     def active_player_write_prompt(self):
         active_player = self.get_active_player()
 
-        emit("write_prompt", to=active_player.sid)
+        emit("display_prompt", to=active_player.sid)
 
         for player in self.players:
             if player.sid != active_player.sid:

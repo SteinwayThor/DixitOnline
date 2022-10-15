@@ -1,5 +1,6 @@
 import enum
 import random
+import threading
 
 from stablediffusion_dixit.image_generation.local_generation.local_image_generator import LocalImageGenerator
 from flask_socketio import SocketIO, emit
@@ -37,7 +38,8 @@ class GamePhase(enum.Enum):
             exit()
 
 class GameState:
-    def __init__(self):
+    def __init__(self, app):
+        self.app = app
         self.image_generator = LocalImageGenerator()
 
         self.phase = GamePhase.WaitingToStart
@@ -60,8 +62,8 @@ class GameState:
         self.phase.trigger_state(self)
 
     def start_game(self):
-        self.state = GamePhase.ActivePlayerPrompt
-        self.state.trigger_state(self)
+        self.phase = GamePhase.ActivePlayerPrompt
+        self.phase.trigger_state(self)
     def get_player(self,sid):
         for player in self.players:
             if player.sid == sid:
@@ -96,21 +98,22 @@ class GameState:
             self.phase.trigger_state(self)
 
     def receive_image_finished_generating(self, image_num, image_path, anim_path):
-        self.anims_this_round.append(anim_path)
+        with self.app.app_context():
+            self.anims_this_round.append(anim_path)
 
-        if self.phase == GamePhase.ActivePlayerImageWait:
-            if self.active_players_image_ticket == image_num:
-                self.active_players_image = image_path
-                self.phase = GamePhase.ActivePlayerGiveClue
-                self.phase.trigger_state(self)
-        elif self.phase in (GamePhase.AllPlayersImageWait, GamePhase.AllPlayersPrompt):
-            for player_id, player_image_ticket in self.other_players_image_tickets.items():
-                if player_image_ticket == image_num:
-                    self.other_players_images[player_id] = image_path
+            if self.phase == GamePhase.ActivePlayerImageWait:
+                if self.active_players_image_ticket == image_num:
+                    self.active_players_image = image_path
+                    self.phase = GamePhase.ActivePlayerGiveClue
+                    self.phase.trigger_state(self)
+            elif self.phase in (GamePhase.AllPlayersImageWait, GamePhase.AllPlayersPrompt):
+                for player_id, player_image_ticket in self.other_players_image_tickets.items():
+                    if player_image_ticket == image_num:
+                        self.other_players_images[player_id] = image_path
 
-            if len(self.other_players_images) == len(self.other_players_image_tickets):
-                self.phase = GamePhase.SelectActiveImage
-                self.phase.trigger_state(self)
+                if len(self.other_players_images) == len(self.other_players_image_tickets):
+                    self.phase = GamePhase.SelectActiveImage
+                    self.phase.trigger_state(self)
 
     def receive_vote(self, sid, voted_for):
         #Find the player who voted
@@ -172,20 +175,20 @@ class GameState:
     def active_player_write_prompt(self):
         active_player = self.get_active_player()
 
-        emit("display_prompt", to=active_player.sid)
+        emit("display_prompt", to=active_player.sid, namespace="/")
 
         for player in self.players:
             if player.sid != active_player.sid:
                 emit("display_waiting_screen", {
                     "state": "inactive_player_wait_active_image_prompt",
                     "image": self.get_random_animation()
-                }, to=player.sid)
+                }, to=player.sid, namespace="/")
 
         for tv in self.tvs:
             emit("display_waiting_screen", {
                 "state": "tv_waiting_active_prompt",
                 "image": self.get_random_animation()
-            }, to=tv.sid)
+            }, to=tv.sid, namespace="/")
 
     def active_player_wait(self):
         active_player = self.get_active_player()
@@ -207,19 +210,19 @@ class GameState:
 
         emit("display_active_player_ok", {
             "image": self.active_players_image
-        }, to=active_player.sid)
+        }, to=active_player.sid, namespace="/")
 
         for player in self.players:
             if player.sid != active_player.sid:
                 emit("display_waiting_screen", {
                     "state": "inactive_player_wait_active_clue"
-                }, to=player.sid)
+                }, to=player.sid, namespace="/")
 
         for tv in self.tvs:
             emit("display_waiting_screen", {
                 "state": "tv_waiting_clue_active",
                 "image": self.get_random_animation()
-            }, to=tv.sid)
+            }, to=tv.sid, namespace="/")
 
     def non_active_players_give_prompt(self):
         active_player = self.get_active_player()
@@ -261,13 +264,13 @@ class GameState:
         emit("display_waiting_screen", {
             "state": "active_player_wait_inactive_votes",
             "image": self.get_random_animation()
-        }, to=active_player.sid)
+        }, to=active_player.sid, namespace="/")
 
         for player in self.players:
             if player.sid != active_player.sid:
                 emit("vote", {
                     "number": len(self.players)
-                }, to=player.sid)
+                }, to=player.sid, namespace="/")
 
         self.create_images_list()
 
@@ -275,7 +278,7 @@ class GameState:
             emit("tv_show_cards_vote", {
                 "state": "tv_waiting_generation_inactive",
                 "images": self.images
-            }, to=tv.sid)
+            }, to=tv.sid, namespace="/")
 
     def create_images_list(self):
         self.card_order = []
@@ -283,7 +286,7 @@ class GameState:
 
         for sid, img in self.other_players_images:
             self.card_order.append(sid)
-            self.images.append(img)   
+            self.images.append(img)
 
         active_player = self.get_active_player()
         active_player_image = self.active_players_image
@@ -335,8 +338,13 @@ class GameState:
                 "player_scores": self.scores,
                 "images" : self.all_images
                 },to=tv.id)
-            sleep(15)
-            self.reset()
+
+            def sleep_and_reset():
+                sleep(15)
+                with self.app.app_context():
+                    self.reset()
+
+            threading.Thread(target=sleep_and_reset).start()
 
     def reset(self):
         self.active_player = (self.active_player + 1) % len(self.players)
@@ -347,7 +355,7 @@ class GameState:
         self.card_order = None
         self.votes = {}
         self.round_scores = {}
-        self.anims_prev_rounds = self.anims_this_round
+        self.anims_prev_rounds.extend(self.anims_this_round)
         self.anims_this_round = []
         self.all_images = {}
         self.active_player_write_prompt()

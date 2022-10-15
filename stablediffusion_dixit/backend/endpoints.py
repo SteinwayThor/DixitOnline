@@ -26,6 +26,10 @@ def serve_image(path):
 def serve_anim(path):
     return send_from_directory("animations", path)
 
+@app.route("/premade_animations/<path:path>")
+def serve_anim(path):
+    return send_from_directory("animations", path)
+
 @socketio.on("join_game")
 def join_game(data):
     player = Player(request.sid,data['name'])
@@ -62,5 +66,5 @@ def disconnect(data):
 
 if __name__ == "__main__":
     freeze_support()
-    game_state = GameState()
+    game_state = GameState(app)
     socketio.run(app)

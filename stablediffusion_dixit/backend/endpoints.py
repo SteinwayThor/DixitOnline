@@ -32,7 +32,7 @@ def join_game(data):
     game_state.players.append(player)
 
 @socketio.on("join_tv")
-def join_tv():
+def join_tv(data):
     game_state.tvs.append(request.sid)
 
 @socketio.on("enter_prompt")
@@ -42,11 +42,11 @@ def enter_prompt(data):
     
 
 @socketio.on("start_game")
-def start_game():
-    game_state.active_player_write_prompt()
+def start_game(data):
+    game_state.start_game()
 
 @socketio.on("active_player_proceed")
-def proceed():
+def proceed(data):
     game_state.active_player_proceed(request.sid)
 
 @socketio.on("vote")

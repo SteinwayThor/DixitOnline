@@ -5,7 +5,7 @@ import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <div class_name = "outlined"><App /></div>
+    <div className = "outlined"><App /></div>
   </React.StrictMode>
 )
 

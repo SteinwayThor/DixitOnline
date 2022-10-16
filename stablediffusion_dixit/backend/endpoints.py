@@ -67,11 +67,11 @@ def start_game(data):
 
 @socketio.on("active_player_proceed")
 def proceed(data):
-    game_state.active_player_proceed(request.sid)
+    game_state.receive_proceed_active_player(request.sid)
 
 @socketio.on("vote")
 def vote(data):
-    game_state.recieve_vote(request.sid,data['vote'])
+    game_state.receive_vote(request.sid,int(data['vote']))
 
 @socketio.on("connect")
 def connect():

@@ -3,6 +3,7 @@ import "./clue.css"
 
 import Button from "src/components/button.jsx"
 import socket from "../../socketConfig.jsx";
+import {backend_url} from "../../backendUrl.jsx";
 
 function ActivePlayerClue(props) {
 
@@ -26,6 +27,9 @@ function ActivePlayerClue(props) {
                 <br />
                 {"Share your clue with the other players!"}
             </div>
+           <div className={"card_image"}>
+             <img src={backend_url + props.info.image} alt="Dixit card" />
+           </div>
             <Button label="Done" onClick={handleAPCDone} />
         </div >
     )

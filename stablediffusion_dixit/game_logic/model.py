@@ -69,7 +69,7 @@ class GameState:
                 return player
 
     def get_random_animation(self) -> str:
-        premade_animations = [f"premade_animations/{n}.gif" for n in range(2)]
+        premade_animations = [f"premade_animations/{n}.gif" for n in range(4)]
         if len(self.anims_prev_rounds) == 0:
             return random.choice(premade_animations)
         else:
@@ -92,15 +92,20 @@ class GameState:
             player = self.get_player(id)
             #get the image from the library
             self.other_players_image_tickets[player.sid] = self.image_generator.request_generation(prompt, callback=self.receive_image_finished_generating)
-            if len(self.other_players_image_tickets) == len(self.players - 1):   #If done, then change the state
+            if len(self.other_players_image_tickets) == len(self.players) - 1:   #If done, then change the state
                 self.phase = GamePhase.AllPlayersImageWait
                 self.phase.trigger_state(self)
+            else:
+                emit("display_waiting_screen", {
+                    "state": "image_generation_inactive_players",
+                    "image": self.get_random_animation()
+                })
 
     def receive_proceed_active_player(self, sid):
-        active_player_sid = self.players[self.active_player]    #Checking the active players ID
+        active_player_sid = self.players[self.active_player].sid    #Checking the active players ID
 
         if sid == active_player_sid:    # If the player is the active one, switch states
-            self.state = GamePhase.AllPlayersPrompt
+            self.phase = GamePhase.AllPlayersPrompt
             self.phase.trigger_state(self)
 
     def receive_image_finished_generating(self, image_num, image_path, anim_path):
@@ -277,7 +282,7 @@ class GameState:
 
         for player in self.players:
             if player.sid != active_player.sid:
-                emit("vote", {
+                emit("display_vote", {
                     "number": len(self.players)
                 }, to=player.sid, namespace="/")
 
@@ -293,7 +298,7 @@ class GameState:
         self.card_order = []
         self.images = []
 
-        for sid, img in self.other_players_images:
+        for sid, img in self.other_players_images.items():
             self.card_order.append(sid)
             self.images.append(img)
 

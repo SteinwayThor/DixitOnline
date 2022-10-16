@@ -29,6 +29,7 @@ def image_generation_process(queue: Queue):
     while True:
         prompt, index, result_pipeline = queue.get()
         pc = ProgressCapturer(gen_pipeline)
+        print(f"Generating image {index}: {prompt}")
         image = gen_pipeline(prompt, num_inference_steps=NUM_INFERENCE_STEPS, width=384, height=512,
                  callback=pc).images[0]
         image_path = f"{IMAGE_FOLDER}/{index}.png"

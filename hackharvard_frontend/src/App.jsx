@@ -5,6 +5,7 @@ import ActivePlayerClue from 'src/frames/active/clue'
 import RoleSelect from 'src/frames/roleSelect.jsx'
 import WaitingScreen from 'src/frames/wait.jsx'
 import PlayerResults from 'src/frames/playerResults'
+import Prompt from 'src/frames/prompt.jsx';
 
 import { useEffect, useState } from 'react'
 import BotVote from './frames/bot/vote'

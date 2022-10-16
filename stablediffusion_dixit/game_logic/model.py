@@ -179,7 +179,9 @@ class GameState:
     def active_player_write_prompt(self):
         active_player = self.get_active_player()    #Get the active player
 
-        emit("display_prompt", to=active_player.sid, namespace="/")
+        emit("display_prompt",{
+            "isActive": True
+        }, to=active_player.sid, namespace="/")
 
         #Display the waiting screen for everyone other than the active player
         for player in self.players:
@@ -239,7 +241,9 @@ class GameState:
 
         for player in self.players:
             if player.sid != active_player.sid:
-                emit("write_prompt", to=player.sid)
+                emit("display_prompt",
+                     {"isActive": False},
+                to=player.sid)
 
         for tv in self.tvs:
             emit("display_waiting_screen", {

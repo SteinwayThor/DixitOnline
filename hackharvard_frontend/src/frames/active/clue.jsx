@@ -2,6 +2,7 @@ import "src/App.css"
 import "./clue.css"
 
 import Button from "src/components/button.jsx"
+import socket from "../../socketConfig.jsx";
 
 function ActivePlayerClue(props) {
 
@@ -14,6 +15,7 @@ function ActivePlayerClue(props) {
     };
 
     function handleAPCDone() {
+      socket.emit("active_player_proceed", {})
         console.log('Done sharing clue');
     }
 

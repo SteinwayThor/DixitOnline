@@ -234,7 +234,7 @@ class GameState:
 
         emit("display_waiting_screen", {
             "text": "Please wait for other players to choose an image.",
-            "state": "Please wait for other players to choose an image.git ",
+            "state": "Please wait for other players to choose an image.",
             "image": self.get_random_animation()
         }, to=active_player.sid)
 
@@ -246,7 +246,7 @@ class GameState:
 
         for tv in self.tvs:
             emit("display_waiting_screen", {
-                "state": "tv_waiting_inactive_prompt",
+                "state": "Please wait for the prompt.",
                 "image": self.get_random_animation()
             }, to=tv)
 

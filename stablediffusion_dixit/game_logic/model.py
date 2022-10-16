@@ -234,6 +234,7 @@ class GameState:
         active_player = self.get_active_player()
 
         emit("display_waiting_screen", {
+            "text": "Please wait for other players to choose an image."
             "state": "active_player_waiting_inactive_prompt",
             "image": self.get_random_animation()
         }, to=active_player.sid)
@@ -256,13 +257,13 @@ class GameState:
         for player in self.players:
             if player.sid != active_player.sid:
                 emit("display_waiting_screen", {
-                    "state": "Please wait for the images to generate!",
+                    "state": "Please wait for the images to generate.",
                     "image": self.get_random_animation()
                 }, to=player.sid)
 
         for tv in self.tvs:
             emit("display_waiting_screen", {
-                "state": "Please wait for the images to generate!",
+                "state": "Please wait for the images to generate.",
                 "image": self.get_random_animation()
             }, to=tv)
 
@@ -284,7 +285,7 @@ class GameState:
 
         for tv in self.tvs:
             emit("tv_show_cards_vote", {
-                "state": "Please wait for the images to generate",
+                "state": "Please wait for the images to generate.",
                 "images": self.images
             }, to=tv, namespace="/")
 

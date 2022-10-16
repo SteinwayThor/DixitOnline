@@ -197,12 +197,11 @@ class GameState:
             }, to=tv, namespace="/")
 
     def active_player_wait(self):
-        active_player = self.get_active_player()
-
-        emit("display_waiting_screen", {
-            "state": "Please wait for the images to generate",
-            "image": self.get_random_animation()
-        }, to=active_player.sid)
+        for player in self.players:
+            emit("display_waiting_screen", {
+                "state": "Please wait for the images to generate",
+                "image": self.get_random_animation()
+            }, to=player.sid)
 
         for tv in self.tvs:
             emit("display_waiting_screen", {
@@ -252,14 +251,11 @@ class GameState:
             }, to=tv)
 
     def non_active_players_wait(self):
-        active_player = self.get_active_player()
-
         for player in self.players:
-            if player.sid != active_player.sid:
-                emit("display_waiting_screen", {
-                    "state": "Please wait for the images to generate.",
-                    "image": self.get_random_animation()
-                }, to=player.sid)
+            emit("display_waiting_screen", {
+                "state": "Please wait for the images to generate.",
+                "image": self.get_random_animation()
+            }, to=player.sid)
 
         for tv in self.tvs:
             emit("display_waiting_screen", {

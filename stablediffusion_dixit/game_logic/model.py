@@ -186,13 +186,13 @@ class GameState:
         for player in self.players:
             if player.sid != active_player.sid:
                 emit("display_waiting_screen", {
-                    "state": "Wait for the active player to pick a prompt",
+                    "state": "Wait for the active player to pick a prompt.",
                     "image": self.get_random_animation()
                 }, to=player.sid, namespace="/")
 
         for tv in self.tvs:
             emit("display_waiting_screen", {
-                "state": "Wait for the active player to pick a prompt",
+                "state": "Wait for the active player to pick a prompt.",
                 "image": self.get_random_animation()
             }, to=tv, namespace="/")
 
@@ -200,13 +200,13 @@ class GameState:
         active_player = self.get_active_player()
 
         emit("display_waiting_screen", {
-            "state": "Please wait for the images to generate",
+            "state": "Please wait for the images to generate.",
             "image": self.get_random_animation()
         }, to=active_player.sid)
 
         for tv in self.tvs:
             emit("display_waiting_screen", {
-                "state": "Please wait for the image to generate",
+                "state": "Please wait for the image to generate.",
                 "image": self.get_random_animation()
             }, to=tv)
 
@@ -221,12 +221,12 @@ class GameState:
         for player in self.players:
             if player.sid != active_player.sid:
                 emit("display_waiting_screen", {
-                    "state": "inactive_player_wait_active_clue"
+                    "state": "Pay attention to the active player for a clue."
                 }, to=player.sid, namespace="/")
 
         for tv in self.tvs:
             emit("display_waiting_screen", {
-                "state": "tv_waiting_clue_active",
+                "state": "Pay attention to the active player for a clue.",
                 "image": self.get_random_animation()
             }, to=tv, namespace="/")
 
@@ -234,7 +234,7 @@ class GameState:
         active_player = self.get_active_player()
 
         emit("display_waiting_screen", {
-            "state": "active_player_waiting_inactive_prompt",
+            "state": "Please wait for the other players to pick a prompt.",
             "image": self.get_random_animation()
         }, to=active_player.sid)
 

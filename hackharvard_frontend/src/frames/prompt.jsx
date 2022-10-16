@@ -12,7 +12,7 @@ function Prompt(props) {
   };
 
   function handlePromptSubmit(event) {
-    socket.io.emit("enter_prompt", {
+    socket.emit("enter_prompt", {
       "prompt": event.target.value
     })
     console.log("active player prompt submitted");

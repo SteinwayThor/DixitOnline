@@ -1,5 +1,6 @@
 import { io } from "socket.io-client"
+import { backend_url } from "./backendUrl"
 
-const socket = io("http://localhost:5000");
+const socket = io(backend_url);
 
 export default socket

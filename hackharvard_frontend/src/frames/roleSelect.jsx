@@ -2,17 +2,20 @@ import 'src/App.css'
 import './roleSelect.css'
 import Button from 'src/components/button'
 import { useEffect, useState } from 'react'
+import socket from "../socketConfig.jsx";
 
 function RoleSelect(props) {
     const [validUser, setValidUser] = useState(false);
     const [inputText, setInputText] = useState("");
 
     function handleHostSelect(role) {
-        console.log(`HOST role selected`)
+        socket.emit("join_tv", "", ()=>console.log("ack"));
+        console.log(`HOST role selected`);
     }
 
     function handlePlayerSelect(role) {
         if (validUser) {
+            socket.emit("join_game", {"name":inputText})
             console.log(`PLAYER role selected`)
         }
     }

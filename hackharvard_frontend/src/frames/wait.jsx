@@ -1,13 +1,14 @@
 import "./wait.css"
+import {backend_url} from "../backendUrl";
 
 function WaitingScreen(props) {
 
   return (
     <div id="wait_container">
       <div id="wait_info" className="info_text">
-        {"waiting :)"}
+        {props.info.state}
       </div>
-      <img src={"https://pbs.twimg.com/media/Eo35eTdUwAEFmHg.jpg"} />
+      <img src={backend_url + props.info.image} />
     </div>
   )
 }

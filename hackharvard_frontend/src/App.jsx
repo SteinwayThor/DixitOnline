@@ -14,42 +14,50 @@ function App() {
   const [frameInfo, setFrameInfo] = useState({});
 
   useEffect(() => {
-    socket.io.on("display_waiting_screen", (msg) => {
+    socket.on("display_waiting_screen", (msg) => {
+      console.log("Display waiting")
       setGameState("wait");
       setFrameInfo(msg);
     });
 
-    socket.io.on("display_active_player_ok", (msg) => {
+    socket.on("display_active_player_ok", (msg) => {
+      console.log("Display active player ok")
       setGameState("active_player_clue");
       setFrameInfo(msg);
     });
 
-    socket.io.on("display_vote", (msg) => {
+    socket.on("display_vote", (msg) => {
+      console.log("Display vote")
       setGameState("bot_vote");
       setFrameInfo(msg);
     })
 
-    socket.io.on("display_prompt", (msg) => {
+    socket.on("display_prompt", (msg) => {
+      console.log("Display prompt")
       setGameState("prompt");
       setFrameInfo(msg);
     })
 
-    socket.io.on("player_display_results", (msg) => {
+    socket.on("player_display_results", (msg) => {
+      console.log("Display player results")
       setGameState("player_results");
       setFrameInfo(msg);
     })
 
-    socket.io.on("tv_show_player_list", (msg) => {
+    socket.on("tv_show_player_list", (msg) => {
+      console.log("Tv show player list");
       setGameState("lobby");
       setFrameInfo(msg);
     })
 
-    socket.io.on("tv_show_cards_vote", (msg) => {
+    socket.on("tv_show_cards_vote", (msg) => {
+      console.log("Tv show cards vote");
       setGameState("tv_vote");
       setFrameInfo(msg);
     });
 
-    socket.io.on("tv_display_results", (msg) => {
+    socket.on("tv_display_results", (msg) => {
+      console.log("Tv display results");
       setGameState("tv_results");
       setFrameInfo(msg);
     })

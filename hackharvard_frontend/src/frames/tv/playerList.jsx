@@ -1,11 +1,17 @@
 import { useState } from "react"
 import "./playerList.css"
+import Button from "../../components/button.jsx";
+import socket from "../../socketConfig.jsx";
 
 function PlayerList(props) {
 
     let items = []
-    for (let player_name in props.names) {
-        items.push(<li key={player_name}>player_name</li>)
+    for (let player in props.names) {
+        items.push(<li key={player}>{props.names[player]}</li>)
+    }
+
+    function handleStartGame(){
+      socket.emit("start_game", {});
     }
 
     return (
@@ -16,6 +22,7 @@ function PlayerList(props) {
                     { items }
                 </ul>
             </div>
+          <Button label={"StartGame"} onClick={handleStartGame}></Button>
         </div>
     )
 }

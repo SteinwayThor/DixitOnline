@@ -15,10 +15,12 @@ function Prompt(props) {
   };
 
   function handlePromptSubmit(event) {
-    socket.emit("enter_prompt", {
-      "prompt": inputText
-    })
-    console.log("active player prompt submitted");
+    if(inputText.length > 0){
+      socket.emit("enter_prompt", {
+        "prompt": inputText
+      })
+      console.log("active player prompt submitted");
+    }
   }
 
   function handleChange(e){

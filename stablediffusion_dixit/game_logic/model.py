@@ -341,7 +341,9 @@ class GameState:
             tv_image_info.append({
                 "image": image,
                 "votes": [player.nickname for player in self.players if player.sid != active_sid and self.votes[player] == sid],
-                "is_active_player": True
+                "is_active_player": active_sid == sid,
+                "prompt": self.prompts[sid],
+                "author": self.get_player(sid).nickname
             })
 
         player_scores = []

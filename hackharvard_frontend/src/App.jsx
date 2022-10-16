@@ -12,6 +12,7 @@ import BotVote from './frames/bot/vote'
 import Vote from './frames/tv/vote.jsx'
 import PlayerList from "./frames/tv/playerList.jsx";
 import ResultsTv from "./frames/tv/resultsTv.jsx";
+import TvResults from "./frames/tv/resultsTv.jsx";
 
 function App() {
   const [gameState, setGameState] = useState("role_select");
@@ -121,10 +122,10 @@ function App() {
   let screen = [];
   if(gameState === "lobby"){
     screen.push(<PlayerList key={"playerlist"} names={frameInfo.names}></PlayerList>)
-  } else if(gameState === "wait"){
-    screen.push(<WaitingScreen key={"waitingscreen"} active={true} info={frameInfo}></WaitingScreen>)
-  } else if(gameState === "vote"){
-    screen.push(<Vote key={"vote"} card_images={frameInfo.images}></Vote>)
+  } else if(gameState === "tv_vote"){
+    screen.push(<Vote key={"vote"} images={frameInfo.images}></Vote>)
+  } else if(gameState === "tv_results"){
+    screen.push(<TvResults images={frameInfo.images} players={frameInfo.players}></TvResults>)
   }
 
   return (

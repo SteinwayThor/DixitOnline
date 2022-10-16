@@ -1,5 +1,6 @@
 import { useState } from "react"
 import "./resultsTv.css"
+import {backend_url} from "../../backendUrl";
 
 function TvResultsOneImage(props) {
   let card_image_class = "card_image";
@@ -9,7 +10,7 @@ function TvResultsOneImage(props) {
   return (
       <div className="card_results">
         <div className={card_image_class}>
-          <img src={props.image} alt={"Card Image"} />
+          <img src={backend_url + props.image} alt={"Card Image"} />
         </div>
         <div className={"card_info"}>
           <div className={"author"}>
@@ -45,7 +46,8 @@ function TvResults(props) {
 
     let items = []
     for (let card in props.images) {
-        items.push(<TvResultsOneImage key={card.image} active={card.is_active_player} image={card.image} votes={card.votes}></TvResultsOneImage>)
+      let c = props.images[card];
+      items.push(<TvResultsOneImage key={c.image} active={c.is_active_player} image={c.image} votes={c.votes}></TvResultsOneImage>)
     }
 
     return (

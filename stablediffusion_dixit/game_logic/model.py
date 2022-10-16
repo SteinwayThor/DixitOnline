@@ -130,7 +130,7 @@ class GameState:
         #Find the player who voted
         current_player = None
         for player in self.players:
-            if player.id == sid:
+            if player.sid == sid:
                 current_player = player
         
         #Set the votes dict(player -> id)
@@ -151,31 +151,25 @@ class GameState:
         active_sid = self.players[self.active_player].sid     # Get the active Players Sid
 
         #If No one voted for the active player
-        if tallies[active_sid] == 0:
+        if tallies[active_sid] in (0, len(self.players) - 1):
             for player in self.players:
                 if not player == self.players[self.active_player]:
-                    player.score += 2
-                    self.round_scores[player] = 2
-
-        #If everyone voted for the active player
-        elif tallies[active_sid] == len(self.players) - 1:
-            for player in self.players:
-               player.score += 2 + tallies[player.sid]
-               self.round_scores[player] = 2 + tallies[player.sid]
+                    self.round_scores[player] = 2 + tallies[player.sid]
+            self.round_scores[self.get_active_player()] = 0
 
         #If at least one person voted for the active player
         else:
             for player in self.players:
                 if player == self.players[self.active_player]:
-                    self.players[self.active_player].score += 3
                     self.round_scores[player] = 3
                 else:
-                    if self.votes[player.sid] == active_sid:
-                        player.score += 3
+                    if self.votes[player] == active_sid:
                         self.round_scores[player] = 3 + tallies[player.sid]
                     else: 
-                        player.score += tallies[player.sid]
                         self.round_scores[player] = tallies[player.sid]
+
+        for player, round_score in self.round_scores.items():
+            player.score += round_score
 
 
     def get_active_player(self):
@@ -341,7 +335,7 @@ class GameState:
                 "player_round_score": self.round_scores[player],
                 "player_total_score": player.score,
                 "guessed_active_player": guess_active,
-                "num_bonus_votes" : tallies[player]
+                "num_bonus_votes" : tallies[player.sid]
             }
             emit("player_display_results",results,to=player.sid)
 
@@ -369,12 +363,17 @@ class GameState:
                 "players": player_scores,
             },to=tv)
 
+        """
         def sleep_and_reset():
             sleep(15)
             with self.app.app_context():
                 self.reset()
+                """
 
-        threading.Thread(target=sleep_and_reset).start()
+
+        #threading.Thread(target=sleep_and_reset).start()
+        sleep(15)
+        self.reset()
 
     def reset(self):
         self.active_player = (self.active_player + 1) % len(self.players)
@@ -389,6 +388,20 @@ class GameState:
         self.anims_this_round = []
         self.active_player_write_prompt()
         self.images = None
+
+    def add_player(self, player):
+        if self.phase == GamePhase.WaitingToStart:
+            self.players.append(player)
+            emit("display_waiting_screen", {
+                "state": "inactive_player_wait_active_image_prompt",
+                "image": self.get_random_animation()
+            })
+
+            for tv in self.tvs:
+                emit("tv_show_player_list", {
+                    "names": [p.nickname for p in self.players]
+                }, to=tv)
+
 
 
 

@@ -5,7 +5,7 @@ function WaitingScreen(props) {
 
   let ims = []
   if(props.info.image){
-    ims.push(<img src={backend_url + props.info.image} alt={"Waiting screen"}/>)
+    ims.push(<img key="foo" src={backend_url + props.info.image} alt={"Waiting screen"}/>)
   }
 
   return (

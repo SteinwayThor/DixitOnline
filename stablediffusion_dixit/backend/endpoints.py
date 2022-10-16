@@ -42,18 +42,16 @@ def serve_premade_anim(path):
 
 @socketio.on("join_game")
 def join_game(data):
-    player = Player(request.sid,data['name'])
-    if game_state.phase == GamePhase.WaitingToStart:
-        game_state.players.append(player)
-        emit("display_waiting_screen", {
-            "state": "inactive_player_wait_active_image_prompt",
-            "image": game_state.get_random_animation()
-        })
+    game_state.add_player(Player(request.sid,data['name']))
+
 
 @socketio.on("join_tv")
 def join_tv(data):
     print("joined tv")
     game_state.tvs.append(request.sid)
+    emit("tv_show_player_list", {
+        "names": [p.nickname for p in game_state.players]
+    })
 
 @socketio.on("enter_prompt")
 def enter_prompt(data):

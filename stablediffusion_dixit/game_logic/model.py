@@ -69,7 +69,7 @@ class GameState:
                 return player
 
     def get_random_animation(self) -> str:
-        premade_animations = [f"premade_animations/{n}.gif" for n in range(4)]
+        premade_animations = [f"premade_animations/{n}.gif" for n in range(5)]
         if len(self.anims_prev_rounds) == 0:
             return random.choice(premade_animations)
         else:

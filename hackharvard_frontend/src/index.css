@@ -33,18 +33,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
 }
-.outlined {
-  color: white;
-  text-shadow:
-    -1px -1px 0 #000,
-     0   -1px 0 #000,
-     1px -1px 0 #000,
-     1px  0   0 #000,
-     1px  1px 0 #000,
-     0    1px 0 #000,
-    -1px  1px 0 #000,
-    -1px  0   0 #000;
-}
+
 
 h1 {
   font-size: 3.2em;

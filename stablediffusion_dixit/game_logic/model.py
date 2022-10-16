@@ -343,7 +343,7 @@ class GameState:
         for sid, image in zip(self.card_order, self.images):
             tv_image_info.append({
                 "image": image,
-                "votes": [player.nickname for player in self.players if self.votes[player] == sid],
+                "votes": [player.nickname for player in self.players if player.sid != active_sid and self.votes[player] == sid],
                 "is_active_player": True
             })
 
@@ -363,17 +363,17 @@ class GameState:
                 "players": player_scores,
             },to=tv)
 
-        """
+
         def sleep_and_reset():
-            sleep(15)
+            sleep(600)
             with self.app.app_context():
                 self.reset()
-                """
 
 
-        #threading.Thread(target=sleep_and_reset).start()
-        sleep(15)
-        self.reset()
+
+        threading.Thread(target=sleep_and_reset).start()
+        #sleep(15)
+        #self.reset()
 
     def reset(self):
         self.active_player = (self.active_player + 1) % len(self.players)

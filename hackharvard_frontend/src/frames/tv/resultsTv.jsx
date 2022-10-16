@@ -54,7 +54,7 @@ function TvResults(props) {
         <div id="container">
             <div id="tv_results">
               <div id="results_cards">
-                items
+                {items}
               </div>
               <TvLeaderboard players={props.players}>
               </TvLeaderboard>

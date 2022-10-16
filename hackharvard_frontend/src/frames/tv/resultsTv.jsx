@@ -7,6 +7,12 @@ function TvResultsOneImage(props) {
   if(props.active){
     card_image_class += " card_image_active"
   }
+  let votes = []
+  for(let vote_index in props.votes){
+    let v = props.votes[v];
+    votes.push(<li className={"voter"} key={v}>{v}</li>)
+  }
+
   return (
       <div className="card_results">
         <div className={card_image_class}>
@@ -14,18 +20,16 @@ function TvResultsOneImage(props) {
         </div>
         <div className={"card_info"}>
           <div className={"author"}>
-            {props.author + (props.active ? " (Active)" : "")}
+            {props.author + (props.active ? " (Active)" : "")}, {props.score} (+{props.round_score})
           </div>
           <div className={"prompt"}>
             {props.prompt}
           </div>
-          <div className={"voters"}>
+          <ul className={"voters"}>
             {
-              props.votes.map((v)=>{
-                <div className={"voter"} key={v}>{v}</div>
-              })
+              votes
             }
-          </div>
+          </ul>
         </div>
       </div>
   )
@@ -47,7 +51,7 @@ function TvResults(props) {
     let items = []
     for (let card in props.images) {
       let c = props.images[card];
-      items.push(<TvResultsOneImage key={c.image} active={c.is_active_player} author={c.author} prompt={c.prompt} image={c.image} votes={c.votes}></TvResultsOneImage>)
+      items.push(<TvResultsOneImage key={c.image} score={c.score} round_score={c.round_score} active={c.is_active_player} author={c.author} prompt={c.prompt} image={c.image} votes={c.votes}></TvResultsOneImage>)
     }
 
     return (

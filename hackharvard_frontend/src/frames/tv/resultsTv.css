@@ -2,3 +2,13 @@ image {
     height: auto;
     width: auto;
 }
+#results_cards {
+    display: flex;
+    flex-wrap: wrap;
+}
+.card_results {
+    flex: none;
+}
+.card_image_active > img {
+    border: 5px solid greenyellow;
+}

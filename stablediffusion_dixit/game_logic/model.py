@@ -225,8 +225,7 @@ class GameState:
 
         for tv in self.tvs:
             emit("display_waiting_screen", {
-                "state": "Pay attention to the active player for a clue.",
-                "image": self.get_random_animation()
+                "state": "Pay attention to the active player for a clue."
             }, to=tv, namespace="/")
 
     def non_active_players_give_prompt(self):
@@ -325,7 +324,7 @@ class GameState:
         else:
             result = "split"
         for player in self.players:
-            guess_active = self.votes[player] == self.get_active_player().sid
+            guess_active = player in self.votes and self.votes[player] == self.get_active_player().sid
             results = {
                 "is_active_player": player.sid == active_sid,
                 "result": result,
@@ -338,12 +337,15 @@ class GameState:
 
         tv_image_info = []
         for sid, image in zip(self.card_order, self.images):
+            player = [p for p in self.players if p.sid == sid][0]
             tv_image_info.append({
                 "image": image,
                 "votes": [player.nickname for player in self.players if player.sid != active_sid and self.votes[player] == sid],
                 "is_active_player": active_sid == sid,
                 "prompt": self.prompts[sid],
-                "author": self.get_player(sid).nickname
+                "author": self.get_player(sid).nickname,
+                "score": player.score,
+                "round_score": self.round_scores[player]
             })
 
         player_scores = []
@@ -364,7 +366,7 @@ class GameState:
 
 
         def sleep_and_reset():
-            sleep(15)
+            sleep(3600)
             with self.app.app_context():
                 self.reset()
 

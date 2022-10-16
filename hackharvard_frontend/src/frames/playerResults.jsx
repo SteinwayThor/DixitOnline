@@ -28,7 +28,7 @@ function PlayerResults(props) {
             result_banner = "You got it!";
         }
         else {
-            result_banner = "L";
+            result_banner = "Wrong!";
         }
 
     }

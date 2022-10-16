@@ -19,7 +19,9 @@ function BotVote(props) {
           <div id="wait_info">
             Vote for the image that best matches the prompt!
           </div>
-          {vote_buttons}
+          <div id="vote_button_container">
+            {vote_buttons}
+          </div>
         </div>
     )
 }

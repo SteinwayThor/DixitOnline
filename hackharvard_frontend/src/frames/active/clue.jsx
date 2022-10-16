@@ -21,7 +21,7 @@ function ActivePlayerClue(props) {
     }
 
     return (
-        <div id="container">
+        <div id="clue_container">
             <div id="apc_info" className="info_text">
                 {"You are the active player."}
                 <br />

@@ -3,6 +3,7 @@
   font-size: 12px;
   line-height: 24px;
   font-weight: 400;
+  text-align: center;
 
   color: rgba(22, 22, 22, 0.87);
   background-color: #7ce3e0;
@@ -49,7 +50,7 @@ button {
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
-  padding-bottom: 20px
+  padding-bottom: 20px;
 
 }
 button:hover {

@@ -324,8 +324,8 @@ class GameState:
             result = "everybody"
         else:
             result = "split"
-        guess_active = (result == "split" or result == "everybody")
         for player in self.players:
+            guess_active = self.votes[player] == self.get_active_player().sid
             results = {
                 "is_active_player": player.sid == active_sid,
                 "result": result,

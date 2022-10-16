@@ -362,7 +362,7 @@ class GameState:
 
 
         def sleep_and_reset():
-            sleep(600)
+            sleep(15)
             with self.app.app_context():
                 self.reset()
 

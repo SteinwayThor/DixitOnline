@@ -33,6 +33,10 @@ body {
   min-height: 100vh;
 }
 
+div {
+  text-align: center;
+}
+
 #wait_info {
   font-size: 20px;
   max-width: 40%;

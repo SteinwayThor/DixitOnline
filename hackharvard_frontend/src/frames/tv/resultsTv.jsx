@@ -9,7 +9,7 @@ function TvResultsOneImage(props) {
   }
   let votes = []
   for(let vote_index in props.votes){
-    let v = props.votes[v];
+    let v = props.votes[vote_index];
     votes.push(<li className={"voter"} key={v}>{v}</li>)
   }
 

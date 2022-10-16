@@ -122,7 +122,7 @@ class GameState:
                     if player_image_ticket == image_num:
                         self.other_players_images[player_id] = image_path
 
-                if len(self.other_players_images) == len(self.other_players_image_tickets):
+                if len(self.other_players_images) == len(self.players) - 1:
                     self.phase = GamePhase.SelectActiveImage
                     self.phase.trigger_state(self)
 

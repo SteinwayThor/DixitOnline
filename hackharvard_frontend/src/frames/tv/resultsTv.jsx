@@ -14,7 +14,7 @@ function TvResultsOneImage(props) {
         </div>
         <div className={"card_info"}>
           <div className={"author"}>
-            {props.author}
+            {props.author + (props.active ? " (Active)" : "")}
           </div>
           <div className={"prompt"}>
             {props.prompt}
@@ -47,7 +47,7 @@ function TvResults(props) {
     let items = []
     for (let card in props.images) {
       let c = props.images[card];
-      items.push(<TvResultsOneImage key={c.image} active={c.is_active_player} image={c.image} votes={c.votes}></TvResultsOneImage>)
+      items.push(<TvResultsOneImage key={c.image} active={c.is_active_player} author={c.author} prompt={c.prompt} image={c.image} votes={c.votes}></TvResultsOneImage>)
     }
 
     return (

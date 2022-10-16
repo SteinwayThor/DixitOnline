@@ -11,7 +11,7 @@ function BotVote(props) {
 
   for(let i = 0; i < props.info.number; i++){
     vote_buttons.push(
-        <Button key={i} label={i} onClick={()=>voteFor(i)} clickable={true}></Button>
+        <Button id="votes" key={i} label={i} onClick={()=>voteFor(i)} clickable={true}></Button>
     )
   }
     return (

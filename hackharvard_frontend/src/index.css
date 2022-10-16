@@ -38,6 +38,10 @@ body {
   max-width: 40%;
 }
 
+#votes {
+  padding: 10px;
+}
+
 
 h1 {
   font-size: 12;

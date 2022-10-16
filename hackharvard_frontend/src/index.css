@@ -33,6 +33,10 @@ body {
   min-height: 100vh;
 }
 
+#wait_container {
+  font-size: 12px;
+}
+
 
 h1 {
   font-size: 12;

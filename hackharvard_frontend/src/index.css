@@ -12,8 +12,6 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
-
-  padding: 20px;
 }
 
 
@@ -60,6 +58,12 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+img {
+  max-width: 50%;
+  height: auto;
+  padding: 20px;
 }
 
 @media (prefers-color-scheme: light) {
